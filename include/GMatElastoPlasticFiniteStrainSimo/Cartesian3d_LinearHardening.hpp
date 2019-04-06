@@ -255,7 +255,6 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
   xt::noalias(C) = (Kgeo + Kmat) / J;
 }
 
-
 // -------------------------------------------------------------------------------------------------
 
 inline std::tuple<Tensor2,Tensor4> LinearHardening::Tangent(const Tensor2& F)

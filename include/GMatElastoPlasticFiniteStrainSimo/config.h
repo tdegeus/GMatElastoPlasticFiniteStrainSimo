@@ -26,12 +26,6 @@
 #include <xtensor/xoperation.hpp>
 #include <xtensor/xsort.hpp>
 #include <xtensor/xmath.hpp>
-#include <xtensor-blas/xlinalg.hpp>
-
-// -------------------------------------------------------------------------------------------------
-
-// dummy operation that can be use to suppress the "unused parameter" warnings
-#define UNUSED(p) ( (void)(p) )
 
 // -------------------------------------------------------------------------------------------------
 

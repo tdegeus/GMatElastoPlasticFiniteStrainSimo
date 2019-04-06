@@ -107,8 +107,8 @@ py::class_<SM::Elastic>(sm, "Elastic")
 
   .def("K", &SM::Elastic::K)
   .def("G", &SM::Elastic::G)
-  .def("Stress", &SM::Elastic::Stress, py::arg("Eps"))
-  .def("Tangent", &SM::Elastic::Tangent, py::arg("Eps"))
+  .def("Stress", &SM::Elastic::Stress, py::arg("F"))
+  .def("Tangent", &SM::Elastic::Tangent, py::arg("F"))
   .def("increment", &SM::Elastic::increment)
   .def("epsp", &SM::Elastic::epsp)
 
@@ -132,8 +132,8 @@ py::class_<SM::LinearHardening>(sm, "LinearHardening")
   .def("G", &SM::LinearHardening::G)
   .def("tauy0", &SM::LinearHardening::tauy0)
   .def("H", &SM::LinearHardening::H)
-  .def("Stress", &SM::LinearHardening::Stress, py::arg("Eps"))
-  .def("Tangent", &SM::LinearHardening::Tangent, py::arg("Eps"))
+  .def("Stress", &SM::LinearHardening::Stress, py::arg("F"))
+  .def("Tangent", &SM::LinearHardening::Tangent, py::arg("F"))
   .def("increment", &SM::LinearHardening::increment)
   .def("epsp", &SM::LinearHardening::epsp)
 
@@ -226,8 +226,8 @@ py::class_<SM::Matrix>(sm, "Matrix")
     py::arg("H"))
 
   .def("increment", &SM::Matrix::increment)
-  .def("Stress", &SM::Matrix::Stress, py::arg("Eps"))
-  .def("Tangent", &SM::Matrix::Tangent, py::arg("Eps"))
+  .def("Stress", &SM::Matrix::Stress, py::arg("F"))
+  .def("Tangent", &SM::Matrix::Tangent, py::arg("F"))
   .def("Epsp", &SM::Matrix::Epsp)
 
   .def("__repr__", [](const SM::Matrix &){
