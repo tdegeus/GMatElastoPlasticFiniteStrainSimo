@@ -1,5 +1,7 @@
 \documentclass[garamond]{goose-article}
 
+\usepackage{framed}
+
 \hypersetup{pdfauthor={T.W.J. de Geus}}
 
 %\title{}
@@ -30,33 +32,47 @@
 
 %\keywords{}
 
-\paragraph{Preface}
+\section{Model}
 
-% This model is described in \citet{Geers2004}
+This document is based on \citet{Geers2004}.
 
-\paragraph{Tensor definition}
+\paragraph{Key tensors}
 
-\emph{Finger tensor} (also known the name \emph{left Cauchy-Green deformation})
-\begin{equation}
-  \T{b} \equiv \T{F} \cdot \T{F}^T
-\end{equation}
-\emph{Left stretch tensor}:
-\begin{equation}
-  \T{v} \equiv \sqrt{\T{B}}
-\end{equation}
-\emph{Hencky’s logarithmic strain tensor}:
-\begin{equation}
-  \T{\varepsilon} \equiv \ln \T{v} = \tfrac{1}{2} \ln \T{b}
-\end{equation}
-
+\begin{itemize}
+  %
+  \item \emph{Finger tensor} (also known the name \emph{left Cauchy-Green deformation})
+  \begin{equation}
+    \T{b} \equiv \T{F} \cdot \T{F}^T
+  \end{equation}
+  %
+  \item \emph{Left stretch tensor}:
+  \begin{equation}
+    \T{v} \equiv \sqrt{\T{b}}
+  \end{equation}
+  %
+  \item \emph{Hencky’s logarithmic strain tensor}:
+  \begin{equation}
+    \T{\varepsilon} \equiv \ln \T{v} = \tfrac{1}{2} \ln \T{b}
+  \end{equation}
+  %
+  \item \emph{Kirchhoff stress tensor} $\T{\tau}$, which is related to the \emph{Cauchy stress tensor} $\T{\sigma}$ as follows:
+  \begin{equation}
+    \T{\tau} \equiv J \T{\sigma}
+  \end{equation}
+  where $J$ is the volume change ratio
+  \begin{equation}
+    J \equiv \det \T{F}
+  \end{equation}
+  %
+\end{itemize}
 
 \paragraph{Model}
 
-This model essentially relies on splitting the deformation gradient $\T{F}$ in an elastic part, $\T{F}_\mathrm{e}$, and a plastic part, $\T{F}_\mathrm{p}$, as follows:
+This model relies on splitting the deformation gradient $\T{F}$ in an elastic part, $\T{F}_\mathrm{e}$, and a plastic part, $\T{F}_\mathrm{p}$, as follows:
 \begin{equation}
   \T{F} \equiv \T{F}_\mathrm{e} \cdot \T{F}_\mathrm{p}
 \end{equation}
-The model is fully defined in the deformed configuration. To that end it is defined in terms of the logarithmic strain. The Kirchhoff stress $\T{\tau}$ is thereby related to the logarithmic elastic strain $\T{\varepsilon}_\mathrm{e} = \tfrac{1}{2} \ln \T{b}_\mathrm{e}$ in the usual way:
+The model is fully defined in the deformed configuration. To that end it is defined in terms of the logarithmic strain. The Kirchhoff stress $\T{\tau}$ is thereby related to the logarithmic elastic strain $\T{\varepsilon}_\mathrm{e} \equiv \tfrac{1}{2} \ln \T{b}_\mathrm{e}$ in the usual way:
 \begin{equation}
   \T{\tau} \equiv K \mathrm{tr} \left( \T{\varepsilon}_\mathrm{e} \right) \T{I} + 2 G \T{\varepsilon}_\mathrm{e}^\mathrm{d}
 \end{equation}
@@ -64,7 +80,8 @@ where $K$ is the bulk modulus and $G$ is the shear modulus, $\T{I}$ is the secon
 \begin{equation}
   \T{\tau} \equiv \TT{C} : \T{\varepsilon}_\mathrm{e},
   \quad
-  \TT{C} = K \T{I} \otimes \T{I} + 2 G \TT{I}^\mathrm{d}
+  \TT{C}_\mathrm{e} = K \T{I} \otimes \T{I} + 2 G \TT{I}^\mathrm{d}
+  \label{eq:tangent:elas}
 \end{equation}
 with $\TT{I}^\mathrm{d} = \TT{I} - \tfrac{1}{3} \T{I} \otimes \T{I}$ the deviator projection. The elastic domain is bounded by a yield function, that, following standard $J_2$ plasticity, reads
 \begin{equation}
@@ -174,6 +191,159 @@ Solving for $\Delta \gamma$ results in
   \Delta \gamma = \frac{\ST{\Phi}}{H + 3G}
 \end{equation}
 
+\begin{framed}
+\begin{quote}
+  Note that although the model is defined in terms of the Kirchhoff stress $\T{\tau}$, the implementation outputs the Cauchy stress $\T{\sigma} = \T{\tau} / J$ for convenience in use with Finite Elements. See below.
+\end{quote}
+\end{framed}
 
+\section{Tangent}
+
+\paragraph{Basic definition}
+
+The consistent tangent operator, defined in the current configuration, is of the form
+%
+\begin{equation}
+  \delta \bm{\tau}
+  =
+  (\TT{K}_{\vec{x}})_{(i)}
+  : \T{L}_\delta^T
+  =
+  (\TT{K}_{\vec{x}})_{(i)}
+  : \T{F}_{(i)}^{-T} \cdot \delta \T{F}^T
+  \label{eq:tangent}
+\end{equation}
+where
+\begin{equation}
+  \bm{L}_\delta
+  \equiv \delta \bm{F} \cdot \bm{F}_{(i)}^{-1}
+  = \left( \bm{F}_{(i)}^{-T} \cdot \delta \bm{F}^T \right)^T
+\end{equation}
+
+\paragraph{Finite element formulation}
+
+\begin{equation}
+  \int\limits_{\Omega} \big( \vec{\nabla} \varphi )^T : (\TT{K}_{\vec{x}})_{(i)} : \T{L}_\delta^T \frac{1}{J_{(i)}} d\Omega
+  =
+  - \int\limits_{\Omega} \big( \vec{\nabla} \varphi )^T : \T{\tau}_{(i)} \frac{1}{J_{(i)}} d\Omega
+\end{equation}
+
+\begin{framed}
+\begin{quote}
+  It should now be obvious why the implementation outputs the Cauchy stress $\T{\sigma} = \T{\tau} / J$ and $(\TT{K}_{\vec{x}})_{(i)} / J_{(i)}$.
+\end{quote}
+\end{framed}
+
+\paragraph{Details}
+
+\begin{equation}
+  (\TT{K}_{\vec{x}})_{(i)} = \TT{K}_\mathrm{geo} + \TT{K}_\mathrm{mat}
+\end{equation}
+where
+\begin{equation}
+  \TT{K}_\mathrm{geo} = - \TT{I}^\mathrm{RT} \cdot \T{\tau}
+\end{equation}
+and
+\begin{equation}
+  \TT{K}_\mathrm{mat} = \TT{C} : \frac{\partial \ST{\T{\varepsilon}}_\mathrm{e}}{\partial \ln \ST{\T{b}}_\mathrm{e}} : \frac{\partial \ln \ST{\T{b}}_\mathrm{e}}{\partial \ST{\T{b}}_\mathrm{e}} : \frac{\partial \ST{\T{b}}_\mathrm{e}}{\partial \T{L}_\delta^T}
+\end{equation}
+where
+\begin{itemize}
+  %
+  \item The derivative of the constitutive response:
+  \begin{equation}
+    \TT{C} =
+    \begin{cases}
+      \TT{C}_\mathrm{e} \quad\mathrm{if}\; \phi \leq 0 \\
+      \TT{C}_\mathrm{ep} \quad\mathrm{otherwise}
+    \end{cases}
+  \end{equation}
+  where $\TT{C}_\mathrm{e}$ is defined in Eq.~\eqref{eq:tangent:elas}, and
+  \begin{align}
+    2 \; \TT{C}_\mathrm{ep} &= \left[ a_0 \T{I} \otimes \T{I} + (1 - 3 a_0) \TT{I}^s - 2 (a_0 - a_1) \ST{\T{N}} \otimes \ST{\T{N}} \right] : \TT{C}_\mathrm{e}
+    \\
+    &= \left( \frac{K}{2} - \frac{G}{3} + a_0 G \right) \T{I} \otimes \T{I} + (1 - 3 a_0) G \TT{I}^s + 2 (a_0 - a_1) \ST{\T{N}} \otimes \ST{\T{N}}
+  \end{align}
+  where
+  \begin{equation}
+    a_0 = \frac{\Delta \gamma G}{\ST{\tau}_\mathrm{eq}}
+    \qquad
+    a_1 = \frac{G}{\frac{\partial h}{\partial \varepsilon_\mathrm{p}} + 3 G}
+  \end{equation}
+  %
+  \item The derivative of Hencky’s strain with respect to the logarithm of the Finger tensor is simply:
+  \begin{equation}
+    \frac{\partial \ST{\T{\varepsilon}}_\mathrm{e}}{\partial \ln \ST{\T{b}}_\mathrm{e}} = \tfrac{1}{2} \, \TT{I}
+  \end{equation}
+  (which is commonly absorbed by the previous term).
+  %
+  \item The derivative of the logarithm of the Finger tensor reads:
+  \begin{equation}
+    \frac{\partial \ln \ST{\T{b}}_\mathrm{e}}{\partial \ST{\T{b}}_\mathrm{e}} = \sum\limits_{n=1}^3 \sum\limits_{m=1}^3 g(\lambda_n, \lambda_m) \vec{v}_n \otimes \vec{v}_m \otimes \vec{v}_n \otimes \vec{v}_m
+  \end{equation}
+  where
+  \begin{equation}
+    g(\lambda_n, \lambda_m) =
+    \begin{cases}
+      \displaystyle \frac{\ln \lambda_m - \ln \lambda_n}{\lambda_m - \lambda_n} \quad\mathrm{if}\; \lambda_m \neq \lambda_n \\
+      \displaystyle \frac{1}{\lambda_n} \quad\mathrm{otherwise}
+    \end{cases}
+  \end{equation}
+  %
+  \item And finally:
+  \begin{equation}
+    \delta \ST{\T{b}}_\mathrm{e} = \frac{\partial \ST{\T{b}}_\mathrm{e}}{\partial \T{L}_\delta^T} : \T{L}_\delta^T = 2 \big( \TT{I}^s \cdot \ST{\T{b}}_\mathrm{e} \big) : \T{L}_\delta^T
+  \end{equation}
+  %
+\end{itemize}
+
+
+
+
+
+\paragraph{Consistency check}
+
+The pull-back of the Kirchhoff stress to the first Piola-Kirchhoff stress reads
+\begin{equation}
+  \T{P}_{(i)} = \bm{\tau}_{(i)} \cdot \T{F}^{-T}_{(i)}
+\end{equation}
+This expression can be used to pull-back the consistent tangent operator, which in the form of Eq.~\eqref{eq:tangent} reads:
+\begin{equation}
+  \delta \bm{\tau}
+  =
+  (\TT{K}_{\vec{x}})_{(i)}
+  : \T{F}_{(i)}^{-T} \cdot \delta \T{F}^T
+  \label{eq:pull-back}
+\end{equation}
+%
+The subscript $\vec{x}$ indicates that the tangent is defined in the last-known iterative configuration. In terms of a variation in the first Piola-Kirchhoff stress, as in Eq.~\eqref{eq:pull-back}, can be rewritten as
+%
+\begin{equation}
+  \delta \T{P}^T
+  =
+  \big[
+  \T{F}_{(i)}^{-1} \cdot
+  (\TT{K}_{\vec{x}})_{(i)}
+  \cdot \T{F}_{(i)}^{-T}
+  \big]
+  : \delta \T{F}^T
+\end{equation}
+%
+Note that this pull-back does not introduce additional approximations. We now have a tangent of the form:
+\begin{equation}
+  \delta \T{P}^T = \TT{K}_{(i)} : \delta \T{F}^T
+  \label{eq:tangent:ref}
+\end{equation}
+
+This form can be conveniently used to perform a consistency check, as is done in Fig.~\ref{fig:consistency}.
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=.5\textwidth]{examples/consistency}
+  \caption{Result of the consistency check (performed in the reference configuration, as in Eq.~\eqref{eq:tangent:ref})}
+  \label{fig:consistency}
+\end{figure}
+
+\bibliography{library}
 
 \end{document}
