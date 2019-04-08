@@ -1,6 +1,6 @@
 # GMatElastoPlasticFiniteStrainSimo
 
-Simo elasto-plastic model. An overview of the theory can be found in `docs/theory` in particular in this (PDF)[docs/theory/main.pdf].
+Simo elasto-plastic model. An overview of the theory can be found in `docs/theory` in particular in this [PDF](docs/theory/main.pdf).
 
 # Contents
 
