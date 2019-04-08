@@ -1,16 +1,16 @@
-\documentclass[garamond]{goose-article}
+\documentclass{goose-article}
 
 \usepackage{framed}
 
 \hypersetup{pdfauthor={T.W.J. de Geus}}
 
-%\title{}
+\title{Simo elasto-plastic model for finite strains}
 
-%\author[1]{}
+\author{Tom~W.J.\ de Geus}
 
 %\affil[1]{} % use '\nl' for line-breaks
 
-%\contact{}
+\contact{tom@geus.me, www.geus.me}
 
 %\header{}
 %\headerEven{}
@@ -25,7 +25,7 @@
 
 \begin{document}
 
-% \maketitle
+\maketitle
 
 %\begin{abstract}
 %\end{abstract}
@@ -34,13 +34,13 @@
 
 \section{Model}
 
-This document is based on \citet{Geers2004}.
+This document is based on \citet{Geers2004}, which presented this model extended with damage.
 
 \paragraph{Key tensors}
 
 \begin{itemize}
   %
-  \item \emph{Finger tensor} (also known the name \emph{left Cauchy-Green deformation})
+  \item \emph{Finger tensor} (also known by the name \emph{left Cauchy-Green deformation})
   \begin{equation}
     \T{b} \equiv \T{F} \cdot \T{F}^T
   \end{equation}
@@ -76,7 +76,7 @@ The model is fully defined in the deformed configuration. To that end it is defi
 \begin{equation}
   \T{\tau} \equiv K \mathrm{tr} \left( \T{\varepsilon}_\mathrm{e} \right) \T{I} + 2 G \T{\varepsilon}_\mathrm{e}^\mathrm{d}
 \end{equation}
-where $K$ is the bulk modulus and $G$ is the shear modulus, $\T{I}$ is the second order unit tensor, and $\T{\varepsilon}_\mathrm{e}^\mathrm{d}$ is the deviator of the elastic strain tensor. Equivalently this can be expressed in terms of a fourth order material stiffness
+where $K$ is the bulk modulus and $G$ is the shear modulus, $\T{I}$ is the second-order unit tensor, and $\T{\varepsilon}_\mathrm{e}^\mathrm{d}$ is the deviator of the elastic strain tensor. Equivalently this can be expressed in terms of a fourth order material stiffness
 \begin{equation}
   \T{\tau} \equiv \TT{C} : \T{\varepsilon}_\mathrm{e},
   \quad
@@ -96,12 +96,12 @@ is the equivalent stress; $\tau_\mathrm{y}$ is the equivalent yield stress that 
   \varepsilon_\mathrm{p} = \int\limits_0^t \dot{\gamma} \;\mathrm{d}t^\prime
   \label{eq:history}
 \end{equation}
-whereby the plastic strain rate, $\dot{\gamma}$, is by construction non-negative. Also note that it is defined in terms of some pseudo-time, as there is no rate-sensitivity. In line with $J_2$-plasticity, normality is used to determined the direction of plastic flow. This corresponds to the following associative flow rule:
+whereby the plastic strain rate, $\dot{\gamma}$, is by construction nonnegative. Also note that it is defined in terms of some pseudo-time, as there is no rate sensitivity. In line with $J_2$-plasticity, normality is used to determine the direction of plastic flow. This corresponds to the following associative flow rule:
 \begin{equation}
   \dot{\bm{\varepsilon}}_\mathrm{p} = \dot{\gamma} \bm{N}
   \label{eq:flow-rule}
 \end{equation}
-where $\bm{N}$ is the Prandtl--Reuss flow vector, which is defined through normality:
+where $\bm{N}$ is the Prandtl-Reuss flow vector, which is defined through normality:
 \begin{equation}
   \bm{N}
   = \frac{\partial \Phi}{\partial \T{\tau}}
@@ -160,7 +160,7 @@ It can now be realised that the trial and updated deviatoric stresses are \emph{
   \T{N} = \ST{\T{N}}
 \end{equation}
 
-To summarise, the return-map involves:
+To summarise, the return map involves:
 \begin{equation}
   \begin{cases}
     \T{\tau} = \ST{\T{\tau}} - 2 G \Delta \gamma \T{N}
@@ -206,10 +206,10 @@ The consistent tangent operator, defined in the current configuration, is of the
 \begin{equation}
   \delta \bm{\tau}
   =
-  (\TT{K}_{\vec{x}})_{(i)}
+  \TT{K}_{(i)}
   : \T{L}_\delta^T
   =
-  (\TT{K}_{\vec{x}})_{(i)}
+  \TT{K}_{(i)}
   : \T{F}_{(i)}^{-T} \cdot \delta \T{F}^T
   \label{eq:tangent}
 \end{equation}
@@ -222,32 +222,43 @@ where
 
 \paragraph{Finite element formulation}
 
+Starting from the strong from of the balance of linear momentum,
 \begin{equation}
-  \int\limits_{\Omega} \big( \vec{\nabla} \varphi )^T : (\TT{K}_{\vec{x}})_{(i)} : \T{L}_\delta^T \frac{1}{J_{(i)}} d\Omega
-  =
-  - \int\limits_{\Omega} \big( \vec{\nabla} \varphi )^T : \T{\tau}_{(i)} \frac{1}{J_{(i)}} d\Omega
+  \vec{\nabla} \cdot \T{\sigma}(\vec{x}) = \vec{0} \quad \forall \vec{x} \in \Omega
 \end{equation}
+in the Finite Element Method to problem is treated in its weak form. In the absence of boundary tractions (e.g.\ for periodic boundary conditions), it reads:
+\begin{equation}
+  \int\limits_{\Omega} \big( \vec{\nabla} w )^T : \T{\tau} \frac{1}{J} d\Omega = 0
+\end{equation}
+which must hold for any possible test function $w(\vec{x})$. Its solution is usually found by making use of consistent linearisation. This corresponds to:
+\begin{equation}
+  \int\limits_{\Omega} \big( \vec{\nabla} w )^T : \TT{K}_{(i)} : \T{L}_\delta^T \frac{1}{J_{(i)}} d\Omega
+  =
+  - \int\limits_{\Omega} \big( \vec{\nabla} w )^T : \T{\tau}_{(i)} \frac{1}{J_{(i)}} d\Omega
+\end{equation}
+
 
 \begin{framed}
 \begin{quote}
-  It should now be obvious why the implementation outputs the Cauchy stress $\T{\sigma} = \T{\tau} / J$ and $(\TT{K}_{\vec{x}})_{(i)} / J_{(i)}$.
+  It should now be obvious why the implementation outputs the Cauchy stress $\T{\sigma} = \T{\tau} / J$ and $(\TT{K}) / J$.
 \end{quote}
 \end{framed}
 
 \paragraph{Details}
 
+The tangent is composed of the linearisation of geometrical and material non-linearities, as follows:
 \begin{equation}
-  (\TT{K}_{\vec{x}})_{(i)} = \TT{K}_\mathrm{geo} + \TT{K}_\mathrm{mat}
+  \TT{K} = \TT{K}_\mathrm{geo} + \TT{K}_\mathrm{mat}
 \end{equation}
-where
+where the linearisation of geometrical non-linearities leads to:
 \begin{equation}
   \TT{K}_\mathrm{geo} = - \TT{I}^\mathrm{RT} \cdot \T{\tau}
 \end{equation}
-and
+and that of material non-linearities to:
 \begin{equation}
   \TT{K}_\mathrm{mat} = \TT{C} : \frac{\partial \ST{\T{\varepsilon}}_\mathrm{e}}{\partial \ln \ST{\T{b}}_\mathrm{e}} : \frac{\partial \ln \ST{\T{b}}_\mathrm{e}}{\partial \ST{\T{b}}_\mathrm{e}} : \frac{\partial \ST{\T{b}}_\mathrm{e}}{\partial \T{L}_\delta^T}
 \end{equation}
-where
+whereby the different constituents are:
 \begin{itemize}
   %
   \item The derivative of the constitutive response:
@@ -311,7 +322,7 @@ This expression can be used to pull-back the consistent tangent operator, which 
 \begin{equation}
   \delta \bm{\tau}
   =
-  (\TT{K}_{\vec{x}})_{(i)}
+  \TT{K}_{(i)}
   : \T{F}_{(i)}^{-T} \cdot \delta \T{F}^T
   \label{eq:pull-back}
 \end{equation}
@@ -323,7 +334,7 @@ The subscript $\vec{x}$ indicates that the tangent is defined in the last-known 
   =
   \big[
   \T{F}_{(i)}^{-1} \cdot
-  (\TT{K}_{\vec{x}})_{(i)}
+  \TT{K}_{(i)}
   \cdot \T{F}_{(i)}^{-T}
   \big]
   : \delta \T{F}^T
@@ -331,11 +342,10 @@ The subscript $\vec{x}$ indicates that the tangent is defined in the last-known 
 %
 Note that this pull-back does not introduce additional approximations. We now have a tangent of the form:
 \begin{equation}
-  \delta \T{P}^T = \TT{K}_{(i)} : \delta \T{F}^T
+  \delta \T{P}^T = (\TT{K}_0)_{(i)} : \delta \T{F}^T
   \label{eq:tangent:ref}
 \end{equation}
-
-This form can be conveniently used to perform a consistency check, as is done in Fig.~\ref{fig:consistency}.
+This form can be conveniently used to perform a consistency check. The result of such a check is shown in Fig.~\ref{fig:consistency}.
 
 \begin{figure}[htp]
   \centering
