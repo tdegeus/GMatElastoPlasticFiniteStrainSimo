@@ -14,7 +14,7 @@ namespace Cartesian3d {
 
 // -------------------------------------------------------------------------------------------------
 
-inline Tensor2 I()
+inline Tensor2 I2()
 {
   return Tensor2({{1.0, 0.0, 0.0},
                   {0.0, 1.0, 0.0},
@@ -97,7 +97,7 @@ inline double Hydrostatic(const Tensor2& A)
 
 inline Tensor2 Deviatoric(const Tensor2& A)
 {
-  return A - trace(A) / 3.0 * I();
+  return A - trace(A) / 3.0 * I2();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ inline Tensor2 Strain(const Tensor2 &F)
 
 inline double Epseq(const Tensor2& Eps)
 {
-  Tensor2 Epsd = Eps - trace(Eps) / 3.0 * I();
+  Tensor2 Epsd = Eps - trace(Eps) / 3.0 * I2();
   return std::sqrt(2.0/3.0 * A2_ddot_B2(Epsd,Epsd));
 }
 
@@ -135,7 +135,7 @@ inline double Epseq(const Tensor2& Eps)
 
 inline double Sigeq(const Tensor2& Sig)
 {
-  Tensor2 Sigd = Sig - trace(Sig) / 3.0 * I();
+  Tensor2 Sigd = Sig - trace(Sig) / 3.0 * I2();
   return std::sqrt(1.5 * A2_ddot_B2(Sigd,Sigd));
 }
 
@@ -167,7 +167,7 @@ inline void deviatoric(const xt::xtensor<double,4>& A, xt::xtensor<double,4>& Ad
 
   #pragma omp parallel
   {
-    Tensor2 I = Cartesian3d::I();
+    Tensor2 I = I2();
     #pragma omp for
     for (size_t e = 0; e < A.shape()[0]; ++e) {
       for (size_t q = 0; q < A.shape()[1]; ++q) {
@@ -188,7 +188,7 @@ inline void strain(const xt::xtensor<double,4>& F, xt::xtensor<double,4>& Eps)
 
   #pragma omp parallel
   {
-    Tensor2 I = Cartesian3d::I();
+    Tensor2 I = I2();
     Tensor2 B, vec;
     Vector  B_val, Eps_val;
     #pragma omp for
@@ -214,7 +214,7 @@ inline void epseq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 
   #pragma omp parallel
   {
-    Tensor2 I = Cartesian3d::I();
+    Tensor2 I = I2();
     #pragma omp for
     for (size_t e = 0; e < A.shape()[0]; ++e) {
       for (size_t q = 0; q < A.shape()[1]; ++q) {
@@ -235,7 +235,7 @@ inline void sigeq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 
   #pragma omp parallel
   {
-    Tensor2 I = Cartesian3d::I();
+    Tensor2 I = I2();
     #pragma omp for
     for (size_t e = 0; e < A.shape()[0]; ++e) {
       for (size_t q = 0; q < A.shape()[1]; ++q) {
