@@ -167,13 +167,13 @@ inline void deviatoric(const xt::xtensor<double,4>& A, xt::xtensor<double,4>& Ad
 
   #pragma omp parallel
   {
-    Tensor2 I = I2();
+    Tensor2 unit = I2();
     #pragma omp for
     for (size_t e = 0; e < A.shape()[0]; ++e) {
       for (size_t q = 0; q < A.shape()[1]; ++q) {
         auto Ai  = xt::adapt(&A (e,q,0,0), xt::xshape<3,3>());
         auto Aid = xt::adapt(&Ad(e,q,0,0), xt::xshape<3,3>());
-        xt::noalias(Aid) = Ai - trace(Ai) / 3.0 * I;
+        xt::noalias(Aid) = Ai - trace(Ai) / 3.0 * unit;
       }
     }
   }
@@ -188,7 +188,6 @@ inline void strain(const xt::xtensor<double,4>& F, xt::xtensor<double,4>& Eps)
 
   #pragma omp parallel
   {
-    Tensor2 I = I2();
     Tensor2 B, vec;
     Vector  B_val, Eps_val;
     #pragma omp for
@@ -214,12 +213,12 @@ inline void epseq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 
   #pragma omp parallel
   {
-    Tensor2 I = I2();
+    Tensor2 unit = I2();
     #pragma omp for
     for (size_t e = 0; e < A.shape()[0]; ++e) {
       for (size_t q = 0; q < A.shape()[1]; ++q) {
         auto Ai  = xt::adapt(&A(e,q,0,0), xt::xshape<3,3>());
-        auto Aid = Ai - trace(Ai) / 3.0 * I;
+        auto Aid = Ai - trace(Ai) / 3.0 * unit;
         Aeq(e,q) = std::sqrt(2.0/3.0 * A2_ddot_B2(Aid,Aid));
       }
     }
@@ -235,12 +234,12 @@ inline void sigeq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 
   #pragma omp parallel
   {
-    Tensor2 I = I2();
+    Tensor2 unit = I2();
     #pragma omp for
     for (size_t e = 0; e < A.shape()[0]; ++e) {
       for (size_t q = 0; q < A.shape()[1]; ++q) {
         auto Ai  = xt::adapt(&A(e,q,0,0), xt::xshape<3,3>());
-        auto Aid = Ai - trace(Ai) / 3.0 * I;
+        auto Aid = Ai - trace(Ai) / 3.0 * unit;
         Aeq(e,q) = std::sqrt(1.5 * A2_ddot_B2(Aid,Aid));
       }
     }
