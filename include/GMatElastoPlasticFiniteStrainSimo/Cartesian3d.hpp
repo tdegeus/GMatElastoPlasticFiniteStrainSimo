@@ -141,16 +141,158 @@ inline double Sigeq(const Tensor2& Sig)
 
 // -------------------------------------------------------------------------------------------------
 
-inline void hydrostatic(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Am)
+inline void hydrostatic(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Am)
 {
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape() ==\
-    std::decay_t<decltype(A)>::shape_type({Am.shape()[0], Am.shape()[1], 3, 3}));
+    std::decay_t<decltype(A)>::shape_type({Am.shape(0), 3, 3}));
 
   #pragma omp parallel
   {
     #pragma omp for
-    for (size_t e = 0; e < A.shape()[0]; ++e) {
-      for (size_t q = 0; q < A.shape()[1]; ++q) {
+    for (size_t e = 0; e < A.shape(0); ++e) {
+      auto Ai = xt::adapt(&A(e,0,0), xt::xshape<3,3>());
+      Am(e) = trace(Ai) / 3.0;
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void deviatoric(const xt::xtensor<double,3>& A, xt::xtensor<double,3>& Ad)
+{
+  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape() ==\
+    std::decay_t<decltype(A)>::shape_type({Ad.shape(0), 3, 3}));
+
+  #pragma omp parallel
+  {
+    Tensor2 unit = I2();
+    #pragma omp for
+    for (size_t e = 0; e < A.shape(0); ++e) {
+      auto Ai  = xt::adapt(&A (e,0,0), xt::xshape<3,3>());
+      auto Aid = xt::adapt(&Ad(e,0,0), xt::xshape<3,3>());
+      xt::noalias(Aid) = Ai - trace(Ai) / 3.0 * unit;
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void strain(const xt::xtensor<double,3>& F, xt::xtensor<double,3>& Eps)
+{
+  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(F.shape() ==\
+    std::decay_t<decltype(F)>::shape_type({Eps.shape(0), 3, 3}));
+
+  #pragma omp parallel
+  {
+    Tensor2 B, vec;
+    Vector  B_val, Eps_val;
+    #pragma omp for
+    for (size_t e = 0; e < F.shape(0); ++e) {
+      auto Fi   = xt::adapt(&F  (e,0,0), xt::xshape<3,3>());
+      auto Epsi = xt::adapt(&Eps(e,0,0), xt::xshape<3,3>());
+      finger(Fi, B);
+      eig(B, vec, B_val);
+      Eps_val = 0.5 * xt::log(B_val);
+      inv_eig(vec, Eps_val, Epsi);
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void epseq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
+{
+  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape() ==\
+    std::decay_t<decltype(A)>::shape_type({Aeq.shape(0), 3, 3}));
+
+  #pragma omp parallel
+  {
+    Tensor2 unit = I2();
+    #pragma omp for
+    for (size_t e = 0; e < A.shape(0); ++e) {
+      auto Ai  = xt::adapt(&A(e,0,0), xt::xshape<3,3>());
+      auto Aid = Ai - trace(Ai) / 3.0 * unit;
+      Aeq(e) = std::sqrt(2.0/3.0 * A2_ddot_B2(Aid,Aid));
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void sigeq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
+{
+  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape() ==\
+    std::decay_t<decltype(A)>::shape_type({Aeq.shape(0), 3, 3}));
+
+  #pragma omp parallel
+  {
+    Tensor2 unit = I2();
+    #pragma omp for
+    for (size_t e = 0; e < A.shape(0); ++e) {
+      auto Ai  = xt::adapt(&A(e,0,0), xt::xshape<3,3>());
+      auto Aid = Ai - trace(Ai) / 3.0 * unit;
+      Aeq(e) = std::sqrt(1.5 * A2_ddot_B2(Aid,Aid));
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Hydrostatic(const xt::xtensor<double,3>& A)
+{
+  xt::xtensor<double,1> Am = xt::empty<double>({A.shape(0)});
+  Cartesian3d::hydrostatic(A, Am);
+  return Am;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,3> Deviatoric(const xt::xtensor<double,3>& A)
+{
+  xt::xtensor<double,3> Ad = xt::empty<double>(A.shape());
+  Cartesian3d::deviatoric(A, Ad);
+  return Ad;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,3> Strain(const xt::xtensor<double,3>& F)
+{
+  xt::xtensor<double,3> Eps = xt::empty<double>(F.shape());
+  Cartesian3d::strain(F, Eps);
+  return Eps;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Epseq(const xt::xtensor<double,3>& A)
+{
+  xt::xtensor<double,1> Aeq = xt::empty<double>({A.shape(0)});
+  Cartesian3d::epseq(A, Aeq);
+  return Aeq;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Sigeq(const xt::xtensor<double,3>& A)
+{
+  xt::xtensor<double,1> Aeq = xt::empty<double>({A.shape(0)});
+  Cartesian3d::sigeq(A, Aeq);
+  return Aeq;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void hydrostatic(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Am)
+{
+  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape() ==\
+    std::decay_t<decltype(A)>::shape_type({Am.shape(0), Am.shape(1), 3, 3}));
+
+  #pragma omp parallel
+  {
+    #pragma omp for
+    for (size_t e = 0; e < A.shape(0); ++e) {
+      for (size_t q = 0; q < A.shape(1); ++q) {
         auto Ai = xt::adapt(&A(e,q,0,0), xt::xshape<3,3>());
         Am(e,q) = trace(Ai) / 3.0;
       }
@@ -163,14 +305,14 @@ inline void hydrostatic(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& A
 inline void deviatoric(const xt::xtensor<double,4>& A, xt::xtensor<double,4>& Ad)
 {
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape() ==\
-    std::decay_t<decltype(A)>::shape_type({Ad.shape()[0], Ad.shape()[1], 3, 3}));
+    std::decay_t<decltype(A)>::shape_type({Ad.shape(0), Ad.shape(1), 3, 3}));
 
   #pragma omp parallel
   {
     Tensor2 unit = I2();
     #pragma omp for
-    for (size_t e = 0; e < A.shape()[0]; ++e) {
-      for (size_t q = 0; q < A.shape()[1]; ++q) {
+    for (size_t e = 0; e < A.shape(0); ++e) {
+      for (size_t q = 0; q < A.shape(1); ++q) {
         auto Ai  = xt::adapt(&A (e,q,0,0), xt::xshape<3,3>());
         auto Aid = xt::adapt(&Ad(e,q,0,0), xt::xshape<3,3>());
         xt::noalias(Aid) = Ai - trace(Ai) / 3.0 * unit;
@@ -184,15 +326,15 @@ inline void deviatoric(const xt::xtensor<double,4>& A, xt::xtensor<double,4>& Ad
 inline void strain(const xt::xtensor<double,4>& F, xt::xtensor<double,4>& Eps)
 {
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(F.shape() ==\
-    std::decay_t<decltype(F)>::shape_type({Eps.shape()[0], Eps.shape()[1], 3, 3}));
+    std::decay_t<decltype(F)>::shape_type({Eps.shape(0), Eps.shape(1), 3, 3}));
 
   #pragma omp parallel
   {
     Tensor2 B, vec;
     Vector  B_val, Eps_val;
     #pragma omp for
-    for (size_t e = 0; e < F.shape()[0]; ++e) {
-      for (size_t q = 0; q < F.shape()[1]; ++q) {
+    for (size_t e = 0; e < F.shape(0); ++e) {
+      for (size_t q = 0; q < F.shape(1); ++q) {
         auto Fi   = xt::adapt(&F  (e,q,0,0), xt::xshape<3,3>());
         auto Epsi = xt::adapt(&Eps(e,q,0,0), xt::xshape<3,3>());
         finger(Fi, B);
@@ -209,14 +351,14 @@ inline void strain(const xt::xtensor<double,4>& F, xt::xtensor<double,4>& Eps)
 inline void epseq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 {
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape() ==\
-    std::decay_t<decltype(A)>::shape_type({Aeq.shape()[0], Aeq.shape()[1], 3, 3}));
+    std::decay_t<decltype(A)>::shape_type({Aeq.shape(0), Aeq.shape(1), 3, 3}));
 
   #pragma omp parallel
   {
     Tensor2 unit = I2();
     #pragma omp for
-    for (size_t e = 0; e < A.shape()[0]; ++e) {
-      for (size_t q = 0; q < A.shape()[1]; ++q) {
+    for (size_t e = 0; e < A.shape(0); ++e) {
+      for (size_t q = 0; q < A.shape(1); ++q) {
         auto Ai  = xt::adapt(&A(e,q,0,0), xt::xshape<3,3>());
         auto Aid = Ai - trace(Ai) / 3.0 * unit;
         Aeq(e,q) = std::sqrt(2.0/3.0 * A2_ddot_B2(Aid,Aid));
@@ -230,14 +372,14 @@ inline void epseq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 inline void sigeq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 {
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape() ==\
-    std::decay_t<decltype(A)>::shape_type({Aeq.shape()[0], Aeq.shape()[1], 3, 3}));
+    std::decay_t<decltype(A)>::shape_type({Aeq.shape(0), Aeq.shape(1), 3, 3}));
 
   #pragma omp parallel
   {
     Tensor2 unit = I2();
     #pragma omp for
-    for (size_t e = 0; e < A.shape()[0]; ++e) {
-      for (size_t q = 0; q < A.shape()[1]; ++q) {
+    for (size_t e = 0; e < A.shape(0); ++e) {
+      for (size_t q = 0; q < A.shape(1); ++q) {
         auto Ai  = xt::adapt(&A(e,q,0,0), xt::xshape<3,3>());
         auto Aid = Ai - trace(Ai) / 3.0 * unit;
         Aeq(e,q) = std::sqrt(1.5 * A2_ddot_B2(Aid,Aid));
@@ -250,7 +392,7 @@ inline void sigeq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 
 inline xt::xtensor<double,2> Hydrostatic(const xt::xtensor<double,4>& A)
 {
-  xt::xtensor<double,2> Am = xt::empty<double>({A.shape()[0], A.shape()[1]});
+  xt::xtensor<double,2> Am = xt::empty<double>({A.shape(0), A.shape(1)});
   Cartesian3d::hydrostatic(A, Am);
   return Am;
 }
@@ -277,7 +419,7 @@ inline xt::xtensor<double,4> Strain(const xt::xtensor<double,4>& F)
 
 inline xt::xtensor<double,2> Epseq(const xt::xtensor<double,4>& A)
 {
-  xt::xtensor<double,2> Aeq = xt::empty<double>({A.shape()[0], A.shape()[1]});
+  xt::xtensor<double,2> Aeq = xt::empty<double>({A.shape(0), A.shape(1)});
   Cartesian3d::epseq(A, Aeq);
   return Aeq;
 }
@@ -286,7 +428,7 @@ inline xt::xtensor<double,2> Epseq(const xt::xtensor<double,4>& A)
 
 inline xt::xtensor<double,2> Sigeq(const xt::xtensor<double,4>& A)
 {
-  xt::xtensor<double,2> Aeq = xt::empty<double>({A.shape()[0], A.shape()[1]});
+  xt::xtensor<double,2> Aeq = xt::empty<double>({A.shape(0), A.shape(1)});
   Cartesian3d::sigeq(A, Aeq);
   return Aeq;
 }

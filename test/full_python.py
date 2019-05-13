@@ -177,7 +177,10 @@ for inc in range(1,ninc):
     lam   += 0.2/float(ninc)
     F      = np.array(I,copy=True)
     F[0,0] =    (1.+lam)
+    F[0,1] =  1.1 * lam
+    F[0,2] =  0.9 * lam
     F[1,1] = 1./(1.+lam)
+    F[1,2] =  0.8 * lam
 
     # compute constitutive response
     # - Python
