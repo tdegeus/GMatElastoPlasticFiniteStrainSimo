@@ -112,7 +112,6 @@ inline void Elastic::tangent(const Tensor2& F, T&& Sig, S&& C) const
 
   // local variables
   Tensor4 dTau_dlnBe, dlnBe_dBe, dBe_dLT, Kmat, Kgeo;
-  ;
 
   // 'linearisation' of the constitutive response
   // Use that "Tau := Ce : Eps = 0.5 * Ce : ln(Be)"
