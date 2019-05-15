@@ -26,6 +26,8 @@
 #include <xtensor/xoperation.hpp>
 #include <xtensor/xsort.hpp>
 #include <xtensor/xmath.hpp>
+#include <xtensor/xtensor_simd.hpp>
+#include <xtensor/xtensor_config.hpp>
 
 // -------------------------------------------------------------------------------------------------
 
@@ -48,7 +50,7 @@
 
 #define GMATELASTOPLASTICFINITESTRAINSIMO_WORLD_VERSION 0
 #define GMATELASTOPLASTICFINITESTRAINSIMO_MAJOR_VERSION 0
-#define GMATELASTOPLASTICFINITESTRAINSIMO_MINOR_VERSION 2
+#define GMATELASTOPLASTICFINITESTRAINSIMO_MINOR_VERSION 3
 
 #define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_AT_LEAST(x,y,z) \
   (GMATELASTOPLASTICFINITESTRAINSIMO_WORLD_VERSION>x || (GMATELASTOPLASTICFINITESTRAINSIMO_WORLD_VERSION>=x && \
@@ -59,18 +61,6 @@
   (GMATELASTOPLASTICFINITESTRAINSIMO_WORLD_VERSION==x && \
    GMATELASTOPLASTICFINITESTRAINSIMO_MAJOR_VERSION==y && \
    GMATELASTOPLASTICFINITESTRAINSIMO_MINOR_VERSION==z)
-
-// -------------------------------------------------------------------------------------------------
-
-#include <xtensor/xtensor_simd.hpp>
-
-#ifndef GMATELASTOPLASTICFINITESTRAINSIMO_ALIGNMENT
-    #ifdef XTENSOR_USE_XSIMD
-        #define GMATELASTOPLASTICFINITESTRAINSIMO_ALIGNMENT XSIMD_DEFAULT_ALIGNMENT
-    #else
-        #define GMATELASTOPLASTICFINITESTRAINSIMO_ALIGNMENT 0
-    #endif
-#endif
 
 // -------------------------------------------------------------------------------------------------
 

@@ -122,7 +122,7 @@ private:
 
 // -------------------------------------------------------------------------------------------------
 
-class alignas(GMATELASTOPLASTICFINITESTRAINSIMO_ALIGNMENT) LinearHardening
+class alignas(XTENSOR_DEFAULT_ALIGNMENT) LinearHardening
 {
 public:
 
@@ -289,12 +289,7 @@ private:
 
   std::vector<Elastic> m_Elastic;
 
-  #ifdef XTENSOR_USE_XSIMD
-  std::vector<LinearHardening,
-    xsimd::aligned_allocator<LinearHardening, XSIMD_DEFAULT_ALIGNMENT>> m_LinearHardening;
-  #else
-  std::vector<LinearHardening> m_LinearHardening;
-  #endif
+  std::vector<LinearHardening, XTENSOR_DEFAULT_ALLOCATOR(LinearHardening)> m_LinearHardening;
 
   // Identifiers for each matrix entry
   xt::xtensor<size_t,2> m_type;  // type (e.g. "Type::Elastic")
