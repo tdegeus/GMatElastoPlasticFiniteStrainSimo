@@ -160,7 +160,7 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
   double phi = taueq - (m_tauy0 + m_H * m_epsp_t);
 
   // (direction of) plastic flow
-  double  dgamma;
+  double  dgamma = 0.0;
   Tensor2 N;
 
   // return map

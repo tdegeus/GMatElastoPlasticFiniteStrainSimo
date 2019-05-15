@@ -62,4 +62,16 @@
 
 // -------------------------------------------------------------------------------------------------
 
+#include <xtensor/xtensor_simd.hpp>
+
+#ifndef GMATELASTOPLASTICFINITESTRAINSIMO_ALIGNMENT
+    #ifdef XTENSOR_USE_XSIMD
+        #define GMATELASTOPLASTICFINITESTRAINSIMO_ALIGNMENT XSIMD_DEFAULT_ALIGNMENT
+    #else
+        #define GMATELASTOPLASTICFINITESTRAINSIMO_ALIGNMENT 0
+    #endif
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
 #endif
