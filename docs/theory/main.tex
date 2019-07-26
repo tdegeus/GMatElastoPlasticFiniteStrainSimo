@@ -34,7 +34,7 @@
 
 \section{Model}
 
-This document is based on \citet{Geers2004}, which presented this model extended with damage.
+This document is based on the work by \citet{Geers2004}, who presented this model extended with damage.
 
 \paragraph{Key tensors}
 
@@ -83,7 +83,7 @@ where $K$ is the bulk modulus and $G$ is the shear modulus, $\T{I}$ is the secon
   \TT{C}_\mathrm{e} = K \T{I} \otimes \T{I} + 2 G \TT{I}^\mathrm{d}
   \label{eq:tangent:elas}
 \end{equation}
-with $\TT{I}^\mathrm{d} = \TT{I} - \tfrac{1}{3} \T{I} \otimes \T{I}$ the deviator projection. The elastic domain is bounded by a yield function, that, following standard $J_2$ plasticity, reads
+where the fourth order tensor $\TT{I}^\mathrm{d} = \TT{I} - \tfrac{1}{3} \T{I} \otimes \T{I}$ projects an arbitrary tensor on its deviator part ($\TT{I}^\mathrm{d} : \T{A} \equiv \T{A}^\mathrm{d}$). The elastic domain is bounded by a yield function, that, following standard $J_2$ plasticity, reads
 \begin{equation}
   \Phi(\T{\tau}, \varepsilon_\mathrm{p}) \equiv \tau_\mathrm{eq} - \tau_\mathrm{y}(\varepsilon_\mathrm{p}) \leq 0
 \end{equation}
@@ -91,7 +91,7 @@ where
 \begin{equation}
   \tau_\mathrm{eq} \equiv \sqrt{ \T{\tau}^\mathrm{d} : \T{\tau}^\mathrm{d} }
 \end{equation}
-is the equivalent stress; $\tau_\mathrm{y}$ is the equivalent yield stress that may, in the case of hardening, be a function of the plastic strain; $\varepsilon_\mathrm{p}$ is the effective plastic strain which depends on the entire strain history:
+is the equivalent stress; $\tau_\mathrm{y}$ is the equivalent yield stress that may, in the case of hardening, be a function of the effective plastic strain $\varepsilon_\mathrm{p}$. The latter depends on the entire strain history:
 \begin{equation}
   \varepsilon_\mathrm{p} = \int\limits_0^t \dot{\gamma} \;\mathrm{d}t^\prime
   \label{eq:history}
@@ -114,7 +114,7 @@ The path-dependent model is solved by discretising in pseudo-time. Accordingly, 
 \begin{equation}
   \varepsilon_\mathrm{p} = \sum \Delta \gamma^t
 \end{equation}
-Solving proceeds through the formulation of a trial state, whereby the full deformation increment is assumed elastic. From this potentially unphysical state one looks for the increment in plastic strain that gives rise to a physically admissible state.
+Solving proceeds through the formulation of a trial state, whereby the full deformation increment is assumed elastic. From this potentially non-physical state one looks for the increment in plastic strain that gives rise to a physically admissible state.
 
 In particular, the incremental deformation tensor
 \begin{equation}
@@ -226,7 +226,7 @@ Starting from the strong from of the balance of linear momentum,
 \begin{equation}
   \vec{\nabla} \cdot \T{\sigma}(\vec{x}) = \vec{0} \quad \forall \vec{x} \in \Omega
 \end{equation}
-in the Finite Element Method to problem is treated in its weak form. In the absence of boundary tractions (e.g.\ for periodic boundary conditions), it reads:
+in the Finite Element Method the problem is treated in its weak form. In the absence of boundary tractions (e.g.\ for periodic boundary conditions), it reads:
 \begin{equation}
   \int\limits_{\Omega} \big( \vec{\nabla} w )^T : \T{\tau} \frac{1}{J} d\Omega = 0
 \end{equation}
@@ -246,15 +246,15 @@ which must hold for any possible test function $w(\vec{x})$. Its solution is usu
 
 \paragraph{Details}
 
-The tangent is composed of the linearisation of geometrical and material non-linearities, as follows:
+The tangent is composed of the linearisation of geometrical and material non-linearity, as follows:
 \begin{equation}
   \TT{K} = \TT{K}_\mathrm{geo} + \TT{K}_\mathrm{mat}
 \end{equation}
-where the linearisation of geometrical non-linearities leads to:
+where the linearisation of geometrical non-linearity leads to:
 \begin{equation}
   \TT{K}_\mathrm{geo} = - \TT{I}^\mathrm{RT} \cdot \T{\tau}
 \end{equation}
-and that of material non-linearities to:
+and that of material non-linearity to:
 \begin{equation}
   \TT{K}_\mathrm{mat} = \TT{C} : \frac{\partial \ST{\T{\varepsilon}}_\mathrm{e}}{\partial \ln \ST{\T{b}}_\mathrm{e}} : \frac{\partial \ln \ST{\T{b}}_\mathrm{e}}{\partial \ST{\T{b}}_\mathrm{e}} : \frac{\partial \ST{\T{b}}_\mathrm{e}}{\partial \T{L}_\delta^T}
 \end{equation}
