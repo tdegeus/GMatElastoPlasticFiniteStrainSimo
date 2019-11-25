@@ -27,7 +27,7 @@ F = [[1.0 + gamma, 0.0                , 0.0],
      [0.0        , 1.0 / (1.0 + gamma), 0.0],
      [0.0        , 0.0                , 1.0]]
 # - stress
-Sig = mat.Stress(Eps)
+Sig = mat.Stress(F)
 # - analytical solution
 EQ(Sig[0,0], 2.0 * G * +2.0 * np.log(1.0 + gamma))
 EQ(Sig[1,1], 2.0 * G * -2.0 * np.log(1.0 + gamma))
