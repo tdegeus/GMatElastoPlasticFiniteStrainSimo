@@ -31,6 +31,12 @@
 
 // -------------------------------------------------------------------------------------------------
 
+#ifndef XSIMD_DEFAULT_ALIGNMENT
+#define XSIMD_DEFAULT_ALIGNMENT 0
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
 #ifndef NDEBUG
 #define GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT
 #endif
