@@ -11,7 +11,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
-      env: COMPILER=gcc GCC=5
+      env: COMPILER=gcc GCC=5 XSIMD=OFF
     - os: linux
       addons:
         apt:
@@ -19,7 +19,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-      env: COMPILER=gcc GCC=6
+      env: COMPILER=gcc GCC=6  XSIMD=OFF
     - os: linux
       addons:
         apt:
@@ -27,7 +27,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-      env: COMPILER=gcc GCC=7
+      env: COMPILER=gcc GCC=7  XSIMD=OFF
     - os: linux
       addons:
         apt:
@@ -36,7 +36,7 @@ matrix:
             - llvm-toolchain-trusty-6.0
           packages:
             - clang-6.0
-      env: COMPILER=clang CLANG=6.0
+      env: COMPILER=clang CLANG=6.0  XSIMD=ON
     - os: osx
       osx_image: xcode8
       compiler: clang
@@ -79,7 +79,7 @@ install:
     - conda install pyxtensor -c conda-forge
     - conda install catch2 -c conda-forge
     # Build/install the library
-    - cmake . -DBUILD_TESTS=ON
+    - cmake . -DBUILD_TESTS=ON -DXSIMD=$XSIMD
     - make
     - sudo make install
     - python setup.py build
