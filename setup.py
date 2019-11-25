@@ -1,49 +1,55 @@
 desc = '''
-Elasto-plastic material model.
+Simo elasto-plastic model (finite strain mechanics).
 '''
 
 from setuptools import setup, Extension
 
-import sys,re
-import setuptools
+import re
+import os
 import pybind11
 import pyxtensor
 
 header = open('include/GMatElastoPlasticFiniteStrainSimo/config.h','r').read()
-world  = re.split(r'(.*)(\#define GMATELASTOPLASTICFINITESTRAINSIMO_WORLD_VERSION\ )([0-9]+)(.*)',header)[3]
-major  = re.split(r'(.*)(\#define GMATELASTOPLASTICFINITESTRAINSIMO_MAJOR_VERSION\ )([0-9]+)(.*)',header)[3]
-minor  = re.split(r'(.*)(\#define GMATELASTOPLASTICFINITESTRAINSIMO_MINOR_VERSION\ )([0-9]+)(.*)',header)[3]
+major = re.split(r'(.*)(\#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_MAJOR\ )([0-9]+)(.*)', header)[3]
+minor = re.split(r'(.*)(\#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_MINOR\ )([0-9]+)(.*)', header)[3]
+patch = re.split(r'(.*)(\#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_PATCH\ )([0-9]+)(.*)', header)[3]
 
-__version__ = '.'.join([world,major,minor])
+__version__ = '.'.join([major, minor, patch])
+
+include_dirs = [
+  os.path.abspath('include/'),
+  pyxtensor.find_pyxtensor(),
+  pyxtensor.find_pybind11(),
+  pyxtensor.find_xtensor(),
+  pyxtensor.find_xtl()]
+
+build = pyxtensor.BuildExt
+
+xsimd = pyxtensor.find_xsimd()
+if xsimd:
+  if len(xsimd) > 0:
+    include_dirs += [xsimd]
+    build.c_opts['unix'] += ['-march=native', '-DXTENSOR_USE_XSIMD']
+    build.c_opts['msvc'] += ['/DXTENSOR_USE_XSIMD']
 
 ext_modules = [
   Extension(
     'GMatElastoPlasticFiniteStrainSimo',
     ['python/main.cpp'],
-    include_dirs=[
-      pybind11.get_include(False),
-      pybind11.get_include(True ),
-      pyxtensor.get_include(False),
-      pyxtensor.get_include(True ),
-      pyxtensor.find_xtensor(),
-      pyxtensor.find_xtl(),
-      pyxtensor.find_xsimd(),
-    ],
-    language='c++'
-  ),
-]
+    include_dirs = include_dirs,
+    language = 'c++')]
 
 setup(
-  name             = 'GMatElastoPlasticFiniteStrainSimo',
-  description      = 'Elasto-plastic material model',
+  name = 'GMatElastoPlasticFiniteStrainSimo',
+  description = 'Simo elasto-plastic model (finite strain mechanics)',
   long_description = desc,
-  version          = __version__,
-  license          = 'MIT',
-  author           = 'Tom de Geus',
-  author_email     = 'tom@geus.me',
-  url              = 'https://github.com/tdegeus/GMatElastoPlasticFiniteStrainSimo',
-  ext_modules      = ext_modules,
-  install_requires = ['pybind11>=2.2.0'],
-  cmdclass         = {'build_ext': pyxtensor.BuildExt},
-  zip_safe         = False,
-)
+  keywords = 'Material model; FEM; FFT',
+  version = __version__,
+  license = 'MIT',
+  author = 'Tom de Geus',
+  author_email = 'tom@geus.me',
+  url = 'https://github.com/tdegeus/GMatElastoPlasticFiniteStrainSimo',
+  ext_modules = ext_modules,
+  install_requires = ['pybind11>=2.2.0', 'pyxtensor>=0.1.1'],
+  cmdclass = {'build_ext': build},
+  zip_safe = False)
