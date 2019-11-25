@@ -37,8 +37,8 @@ SECTION("Elastic")
   // - stress
   Sig = mat.Stress(F);
   // - analytical solution
-  EQ(Sig(0,0), 2.0 * G * +2.0 * std::log(1.0 + gamma));
-  EQ(Sig(1,1), 2.0 * G * -2.0 * std::log(1.0 + gamma));
+  EQ(Sig(0,0), G * +2.0 * std::log(1.0 + gamma));
+  EQ(Sig(1,1), G * -2.0 * std::log(1.0 + gamma));
   EQ(Sig(2,2), 0);
   EQ(Sig(0,1), 0);
   EQ(Sig(0,2), 0);
@@ -64,7 +64,7 @@ SECTION("Matrix")
 
   // all rows elastic
   {
-    xt::xtensor<size_t,2> I = xt::ones<size_t>({nelem,nip});
+    xt::xtensor<size_t,2> I = xt::ones<size_t>({nelem, nip});
     mat.setElastic(I, K, G);
   }
 
@@ -88,12 +88,11 @@ SECTION("Matrix")
       xt::view(f, e, q) = F;
   // - stress
   sig = mat.Stress(f);
-
   // - analytical solution
-  EQ(sig(0,0,0,0), 2.0 * G * +2.0 * std::log(1.0 + gamma));  EQ(sig(0,1,0,0), 2.0 * G * +2.0 * std::log(1.0 + gamma));
-  EQ(sig(0,0,1,1), 2.0 * G * -2.0 * std::log(1.0 + gamma));  EQ(sig(0,1,1,1), 2.0 * G * -2.0 * std::log(1.0 + gamma));
-  EQ(sig(0,0,0,1), 0);                                       EQ(sig(0,1,0,1), 0);
-  EQ(sig(0,0,1,0), 0);                                       EQ(sig(0,1,1,0), 0);
+  EQ(sig(0,0,0,0), G * +2.0 * std::log(1.0 + gamma));  EQ(sig(0,1,0,0), G * +2.0 * std::log(1.0 + gamma));
+  EQ(sig(0,0,1,1), G * -2.0 * std::log(1.0 + gamma));  EQ(sig(0,1,1,1), G * -2.0 * std::log(1.0 + gamma));
+  EQ(sig(0,0,0,1), 0);                                 EQ(sig(0,1,0,1), 0);
+  EQ(sig(0,0,1,0), 0);                                 EQ(sig(0,1,1,0), 0);
 
   REQUIRE(xt::allclose(xt::view(sig, xt::all(), xt::all(), xt::keep(2), xt::all()), 0));
   REQUIRE(xt::allclose(xt::view(sig, xt::all(), xt::all(), xt::all(), xt::keep(2)), 0));
