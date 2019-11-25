@@ -4,8 +4,6 @@
 
 ================================================================================================= */
 
-#define XTENSOR_USE_XSIMD
-
 #include <pybind11/pybind11.h>
 #include <pyxtensor/pyxtensor.hpp>
 
@@ -14,7 +12,7 @@
 #define GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT
 
 // include library
-#include "../include/GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h"
+#include <GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h>
 
 // abbreviate name-space
 namespace py = pybind11;
