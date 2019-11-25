@@ -31,9 +31,17 @@
 
 // -------------------------------------------------------------------------------------------------
 
-#ifndef XSIMD_DEFAULT_ALIGNMENT
-#define XSIMD_DEFAULT_ALIGNMENT 0
+#define XSTR(x) STR(x)
+#define STR(x) #x
+#pragma message "XTENSOR_DEFAULT_ALIGNMENT = " XSTR(XTENSOR_DEFAULT_ALIGNMENT)
+
+#ifndef XTENSOR_DEFAULT_ALIGNMENT
+#define XTENSOR_DEFAULT_ALIGNMENT 0
 #endif
+
+#define XSTR(x) STR(x)
+#define STR(x) #x
+#pragma message "XTENSOR_DEFAULT_ALIGNMENT = " XSTR(XTENSOR_DEFAULT_ALIGNMENT)
 
 // -------------------------------------------------------------------------------------------------
 
