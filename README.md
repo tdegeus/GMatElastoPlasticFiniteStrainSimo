@@ -1,16 +1,22 @@
+
 # GMatElastoPlasticFiniteStrainSimo
+
+[![Travis](https://travis-ci.com/tdegeus/GMatElastoPlasticFiniteStrainSimo.svg?branch=master)](https://travis-ci.com/tdegeus/GMatElastoPlasticFiniteStrainSimo)
 
 Simo elasto-plastic model. An overview of the theory can be found in `docs/` in particular in this [PDF](docs/readme.pdf).
 
 # Contents
 
-<!-- MarkdownTOC -->
+<!-- MarkdownTOC levels="1,2" -->
 
 - [Implementation](#implementation)
 - [Installation](#installation)
-    - [Linux / macOS](#linux--macos)
-        - [Install system-wide \(depends on your privileges\)](#install-system-wide-depends-on-your-privileges)
-        - [Install in custom location \(user\)](#install-in-custom-location-user)
+    - [C++ headers](#c-headers)
+    - [Python module](#python-module)
+- [Compiling](#compiling)
+    - [By hand](#by-hand)
+    - [Using pkg-config](#using-pkg-config)
+    - [Using `CMakeLists.txt`](#using-cmakeliststxt)
 - [References / Credits](#references--credits)
 
 <!-- /MarkdownTOC -->
@@ -60,53 +66,99 @@ int main()
 
 # Installation
 
-## Linux / macOS
+## C++ headers
 
-### Install system-wide (depends on your privileges)
+### Using conda
 
-1.  Proceed to a (temporary) build directory. For example:
+```bash
+conda install -c conda-forge gmatelastoplasticfinitestrainsimo
+```
 
-    ```bash
-    cd /path/to/GMatElastoPlasticFiniteStrainSimo
-    mkdir build
-    cd build
-    ```
+### From source
 
-2.  'Install' `GMatElastoPlasticFiniteStrainSimo`. For the path in **1.**:
+```bash
+# Download GMatElastoPlasticFiniteStrainSimo
+git checkout https://github.com/tdegeus/GMatElastoPlasticFiniteStrainSimo.git
+cd GMatElastoPlasticFiniteStrainSimo
 
-    ```bash
-    cmake .. 
-    make install
-    ```
+# Install headers, CMake and pkg-config support
+cmake .
+make install
+```
 
-> One usually does not need any compiler arguments after following this protocol.
+## Python module
 
-### Install in custom location (user)
+### Using conda
 
-1.  Proceed to a (temporary) build directory. For example:
+> Warning: this has the disadvantage of xsimd optimisation being switched off
 
-    ```bash
-    cd /path/to/GMatElastoPlasticFiniteStrainSimo
-    mkdir build
-    cd build
-    ```
+```bash
+conda install -c conda-forge python-gmatelastoplasticfinitestrainsimo
+```
 
-2.  'Install' `GMatElastoPlasticFiniteStrainSimo`, to install it in a custom location. For the path in **1.**:
+### From source
 
-    ```bash
-    mkdir /custom/install/path
-    cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/custom/install/path
-    make install
-    ```
+> To get the prerequisites you *can* use conda
+> 
+> ```bash
+> conda install -c conda-forge pyxtensor
+> conda install -c conda-forge xsimd
+> ```
 
-3.  Add the appropriate paths to for example your ``~/.bashrc`` (or ``~/.zshrc``). For the path in **2.**: 
+```bash
+# Download GMatElastoPlasticFiniteStrainSimo
+git checkout https://github.com/tdegeus/GMatElastoPlasticFiniteStrainSimo.git
+cd GMatElastoPlasticFiniteStrainSimo
 
-    ```bash
-    export PKG_CONFIG_PATH=/custom/install/path/share/pkgconfig:$PKG_CONFIG_PATH
-    export CPLUS_INCLUDE_PATH=$HOME/custom/install/path/include:$CPLUS_INCLUDE_PATH
-    ```
+# Compile and install the Python module
+python setup.py build
+python setup.py install
+```
 
-> One usually has to inform the CMake or the compiler about `${CPLUS_INCLUDE_PATH}`.
+# Compiling
+
+## By hand
+
+Presuming that the compiler is `c++`, compile using:
+
+```
+c++ -I/path/to/GMatElastoPlasticFiniteStrainSimo/include ...
+```
+
+## Using pkg-config
+
+Presuming that the compiler is `c++`, compile using:
+
+```
+c++ `pkg-config --cflags GMatElastoPlasticFiniteStrainSimo` ...
+```
+
+## Using `CMakeLists.txt`
+
+Using *GMatElastoPlasticFiniteStrainSimo* the `CMakeLists.txt` can be as follows
+
+```cmake
+cmake_minimum_required(VERSION 3.1)
+
+project(example)
+
+find_package(xtensor REQUIRED)
+find_package(GMatElastoPlasticFiniteStrainSimo REQUIRED)
+
+add_executable(example example.cpp)
+
+target_link_libraries(example
+    PRIVATE
+    xtensor
+    GMatElastoPlasticFiniteStrainSimo)
+```
+
+Compilation can then proceed using 
+
+```bash
+cmake .
+make
+```
 
 # References / Credits
 
