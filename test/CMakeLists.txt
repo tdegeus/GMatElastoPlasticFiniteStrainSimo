@@ -27,16 +27,17 @@ find_package(Catch2 REQUIRED)
 find_package(xtensor REQUIRED)
 find_package(xtl REQUIRED)
 
-
-
 add_executable(main main.cpp Cartesian3d.cpp)
+
 if(XSIMD)
     find_package(xsimd REQUIRED)
     target_link_libraries(main PUBLIC Catch2::Catch2 xtensor xtl xsimd)
 else()
     target_link_libraries(main PUBLIC Catch2::Catch2 xtensor xtl)
 endif()
+
 target_include_directories(main PRIVATE "${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}")
+
 if(WARNINGS)
     if(MSVC)
         target_compile_options(main PRIVATE /W4)

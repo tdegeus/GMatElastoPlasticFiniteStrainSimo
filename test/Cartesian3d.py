@@ -69,7 +69,7 @@ Sig = mat.Stress(F)
 EQ(Sig[0,0,0,0], G * +2.0 * np.log(1.0 + gamma)); EQ(Sig[0,1,0,0], G * +2.0 * np.log(1.0 + gamma))
 EQ(Sig[0,0,1,1], G * -2.0 * np.log(1.0 + gamma)); EQ(Sig[0,1,1,1], G * -2.0 * np.log(1.0 + gamma))
 ALLEQ(Sig[:,:,0,1], 0)
-ALLEQ(Sig[:,:,1,1], 0)
+ALLEQ(Sig[:,:,1,0], 0)
 ALLEQ(Sig[:,:,:,2], 0)
 ALLEQ(Sig[:,:,2,:], 0)
 
