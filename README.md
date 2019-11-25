@@ -1,6 +1,6 @@
 # GMatElastoPlasticFiniteStrainSimo
 
-Simo elasto-plastic model. An overview of the theory can be found in `docs/theory` in particular in this [PDF](docs/theory/main.pdf).
+Simo elasto-plastic model. An overview of the theory can be found in `docs/` in particular in this [PDF](docs/readme.pdf).
 
 # Contents
 
@@ -9,7 +9,7 @@ Simo elasto-plastic model. An overview of the theory can be found in `docs/theor
 - [Implementation](#implementation)
 - [Installation](#installation)
     - [Linux / macOS](#linux--macos)
-        - [Install systemwide \(depends on your privileges\)](#install-system-wide-depends-on-your-privileges)
+        - [Install system-wide \(depends on your privileges\)](#install-system-wide-depends-on-your-privileges)
         - [Install in custom location \(user\)](#install-in-custom-location-user)
 - [References / Credits](#references--credits)
 
@@ -62,7 +62,7 @@ int main()
 
 ## Linux / macOS
 
-### Install systemwide (depends on your privileges)
+### Install system-wide (depends on your privileges)
 
 1.  Proceed to a (temporary) build directory. For example:
 
