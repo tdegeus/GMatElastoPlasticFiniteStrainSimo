@@ -29,8 +29,8 @@ F = [[1.0 + gamma, 0.0                , 0.0],
 # - stress
 Sig = mat.Stress(F)
 # - analytical solution
-EQ(Sig[0,0], 2.0 * G * +2.0 * np.log(1.0 + gamma))
-EQ(Sig[1,1], 2.0 * G * -2.0 * np.log(1.0 + gamma))
+EQ(Sig[0,0], G * +2.0 * np.log(1.0 + gamma))
+EQ(Sig[1,1], G * -2.0 * np.log(1.0 + gamma))
 EQ(Sig[2,2], 0)
 EQ(Sig[0,1], 0)
 EQ(Sig[0,2], 0)
@@ -66,8 +66,8 @@ F[:,:,2,2] = 1.0
 Sig = mat.Stress(F)
 
 # - analytical solution
-EQ(Sig[0,0,0,0], 2.0 * G * +2.0 * np.log(1.0 + gamma)); EQ(sig[0,1,0,0], 2.0 * G * +2.0 * np.log(1.0 + gamma))
-EQ(Sig[0,0,1,1], 2.0 * G * -2.0 * np.log(1.0 + gamma)); EQ(sig[0,1,1,1], 2.0 * G * -2.0 * np.log(1.0 + gamma))
+EQ(Sig[0,0,0,0], G * +2.0 * np.log(1.0 + gamma)); EQ(sig[0,1,0,0], G * +2.0 * np.log(1.0 + gamma))
+EQ(Sig[0,0,1,1], G * -2.0 * np.log(1.0 + gamma)); EQ(sig[0,1,1,1], G * -2.0 * np.log(1.0 + gamma))
 ALLEQ(Sig[:,:,0,1], 0)
 ALLEQ(Sig[:,:,1,1], 0)
 ALLEQ(Sig[:,:,:,2], 0)
