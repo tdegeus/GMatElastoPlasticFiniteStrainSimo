@@ -22,8 +22,6 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <complex.h>
-#include <float.h>
 #include "Cartesian3d.h"
 
 // Macros
