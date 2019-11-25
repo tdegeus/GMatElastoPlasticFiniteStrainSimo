@@ -88,14 +88,6 @@ make install
 
 ## Python module
 
-### Using conda
-
-> Warning: this has the disadvantage of xsimd optimisation being switched off
-
-```bash
-conda install -c conda-forge python-gmatelastoplasticfinitestrainsimo
-```
-
 ### From source
 
 > To get the prerequisites you *can* use conda

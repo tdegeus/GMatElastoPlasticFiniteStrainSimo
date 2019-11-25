@@ -38,7 +38,9 @@ set(GMATELASTOPLASTICFINITESTRAINSIMO_HEADERS
     ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h
     ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d.hpp
     ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d_Elastic.hpp
+    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d_LinearHardening.hpp
     ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d_Matrix.hpp
+    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d_eigvals.hpp
     ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/config.h)
 
 add_library(${PROJECT_NAME} INTERFACE)
