@@ -56,6 +56,7 @@ sm.def("I4d",
     "Fourth order deviatoric projection tensor.",
     &SM::I4d);
 
+
 // Tensor algebra
 
 
@@ -150,14 +151,6 @@ py::class_<SM::Elastic>(sm, "Elastic")
         &SM::Elastic::Tangent,
         "Returns tangent stiffness tensor (fourth order), for a given deformation gradient tensor.",
         py::arg("F"))
-
-    .def("increment",
-        "Apply time-increment (dummy function)."
-        &SM::Elastic::increment)
-
-    .def("epsp",
-        "Returns the equivalent plastic strain (== 0).",
-        &SM::Elastic::epsp)
 
     .def("__repr__", [](const SM::Elastic &){
         return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.Elastic>"; });

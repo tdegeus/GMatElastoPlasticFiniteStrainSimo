@@ -108,12 +108,6 @@ public:
   // Stress & Tangent (auto allocation)
   std::tuple<Tensor2,Tensor4> Tangent(const Tensor2& F) const;
 
-  // Increment (does nothing)
-  void increment(); const;
-
-  // Plastic strain (always zero)
-  double epsp() const;
-
 private:
 
   double m_K; // bulk modulus
@@ -158,20 +152,27 @@ public:
 
 private:
 
-  double m_K;     // bulk modulus
-  double m_G;     // shear modulus
+  double m_K; // bulk modulus
+  double m_G; // shear modulus
   double m_tauy0; // initial yield stress
-  double m_H;     // hardening modulus
+  double m_H; // hardening modulus
 
   // plastic strain
-  double m_epsp   = 0.0;
+  double m_epsp = 0.0;
   double m_epsp_t = 0.0;
 
   // deformation gradient tensor & elastic Finger tensor (default: unit tensor)
-  Tensor2 m_F    = Tensor2({{1., 0., 0.}, {0., 1., 0.}, {0., 0., 1.}});
-  Tensor2 m_F_t  = Tensor2({{1., 0., 0.}, {0., 1., 0.}, {0., 0., 1.}});
-  Tensor2 m_Be   = Tensor2({{1., 0., 0.}, {0., 1., 0.}, {0., 0., 1.}});
-  Tensor2 m_Be_t = Tensor2({{1., 0., 0.}, {0., 1., 0.}, {0., 0., 1.}});
+  Tensor2 m_F
+      = Tensor2({{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}});
+
+  Tensor2 m_F_t
+      = Tensor2({{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}});
+
+  Tensor2 m_Be
+      = Tensor2({{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}});
+
+  Tensor2 m_Be_t
+      = Tensor2({{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}});
 };
 
 // -------------------------------------------------------------------------------------------------

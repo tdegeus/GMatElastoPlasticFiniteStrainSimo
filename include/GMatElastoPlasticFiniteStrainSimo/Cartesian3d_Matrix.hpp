@@ -448,7 +448,7 @@ inline void Matrix::epsp(xt::xtensor<double,2>& epsp) const
 
             switch (m_type(e,q)) {
                 case Type::Elastic:
-                    epsp(e,q) = m_Elastic[m_index(e,q)].epsp();
+                    epsp(e,q) = 0.0;
                     break;
                 case Type::LinearHardening:
                     epsp(e,q) = m_LinearHardening[m_index(e,q)].epsp();
