@@ -54,9 +54,14 @@ inline xt::xtensor<double,2> Matrix::K() const
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
+
             switch (m_type(e,q)) {
-                case Type::Elastic:         out(e,q) = m_Elastic        [m_index(e,q)].K(); break;
-                case Type::LinearHardening: out(e,q) = m_LinearHardening[m_index(e,q)].K(); break;
+                case Type::Elastic:
+                    out(e,q) = m_Elastic[m_index(e,q)].K();
+                    break;
+                case Type::LinearHardening:
+                    out(e,q) = m_LinearHardening[m_index(e,q)].K();
+                    break;
             }
         }
     }
@@ -74,9 +79,14 @@ inline xt::xtensor<double,2> Matrix::G() const
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
+
             switch (m_type(e,q)) {
-                case Type::Elastic:         out(e,q) = m_Elastic        [m_index(e,q)].G(); break;
-                case Type::LinearHardening: out(e,q) = m_LinearHardening[m_index(e,q)].G(); break;
+                case Type::Elastic:
+                    out(e,q) = m_Elastic[m_index(e,q)].G();
+                    break;
+                case Type::LinearHardening:
+                    out(e,q) = m_LinearHardening[m_index(e,q)].G();
+                    break;
             }
         }
     }
@@ -87,22 +97,26 @@ inline xt::xtensor<double,2> Matrix::G() const
 
 inline xt::xtensor<double,4> Matrix::I2() const
 {
-  xt::xtensor<double,4> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+    xt::xtensor<double,4> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
 
-  #pragma omp parallel
-  {
-      Tensor2 unit = Cartesian3d::I2();
+    #pragma omp parallel
+    {
+        Tensor2 unit = Cartesian3d::I2();
 
-      #pragma omp for
-      for (size_t e = 0; e < m_nelem; ++e) {
-          for (size_t q = 0; q < m_nip; ++q) {
-              auto view = xt::adapt(&out(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
-              xt::noalias(view) = unit;
+        #pragma omp for
+        for (size_t e = 0; e < m_nelem; ++e) {
+            for (size_t q = 0; q < m_nip; ++q) {
+
+                auto view = xt::adapt(
+                    &out(e, q, 0, 0),
+                    xt::xshape<m_ndim, m_ndim>());
+
+                xt::noalias(view) = unit;
+            }
         }
-      }
-  }
+    }
 
-  return out;
+    return out;
 }
 
 
@@ -112,12 +126,17 @@ inline xt::xtensor<double,6> Matrix::II() const
 
     #pragma omp parallel
     {
-      Tensor4 unit = Cartesian3d::II();
-      #pragma omp for
-      for (size_t e = 0; e < m_nelem; ++e) {
-          for (size_t q = 0; q < m_nip; ++q) {
-              auto view = xt::adapt(&out(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
-              xt::noalias(view) = unit;
+        Tensor4 unit = Cartesian3d::II();
+
+        #pragma omp for
+        for (size_t e = 0; e < m_nelem; ++e) {
+            for (size_t q = 0; q < m_nip; ++q) {
+
+                auto view = xt::adapt(
+                    &out(e, q, 0, 0, 0, 0),
+                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+
+                xt::noalias(view) = unit;
           }
         }
     }
@@ -132,37 +151,47 @@ inline xt::xtensor<double,6> Matrix::I4() const
 
   #pragma omp parallel
   {
-      Tensor4 unit = Cartesian3d::I4();
-      #pragma omp for
-      for (size_t e = 0; e < m_nelem; ++e) {
-          for (size_t q = 0; q < m_nip; ++q) {
-              auto view = xt::adapt(&out(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
-              xt::noalias(view) = unit;
-          }
-      }
-  }
+        Tensor4 unit = Cartesian3d::I4();
 
-  return out;
+        #pragma omp for
+        for (size_t e = 0; e < m_nelem; ++e) {
+            for (size_t q = 0; q < m_nip; ++q) {
+
+                auto view = xt::adapt(
+                    &out(e, q, 0, 0, 0, 0),
+                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+
+                xt::noalias(view) = unit;
+            }
+        }
+    }
+
+    return out;
 }
 
 
 inline xt::xtensor<double,6> Matrix::I4rt() const
 {
-  xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
+    xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
 
-  #pragma omp parallel
-  {
-      Tensor4 unit = Cartesian3d::I4rt();
-      #pragma omp for
-      for (size_t e = 0; e < m_nelem; ++e) {
-          for (size_t q = 0; q < m_nip; ++q) {
-              auto view = xt::adapt(&out(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
-              xt::noalias(view) = unit;
-          }
-      }
-  }
+    #pragma omp parallel
+    {
+        Tensor4 unit = Cartesian3d::I4rt();
 
-  return out;
+        #pragma omp for
+        for (size_t e = 0; e < m_nelem; ++e) {
+            for (size_t q = 0; q < m_nip; ++q) {
+
+                auto view = xt::adapt(
+                    &out(e, q, 0, 0, 0, 0),
+                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+
+                xt::noalias(view) = unit;
+            }
+        }
+    }
+
+    return out;
 }
 
 
@@ -173,10 +202,14 @@ inline xt::xtensor<double,6> Matrix::I4s() const
     #pragma omp parallel
     {
         Tensor4 unit = Cartesian3d::I4s();
+
         #pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {
             for (size_t q = 0; q < m_nip; ++q) {
-                auto view = xt::adapt(&out(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
+                auto view = xt::adapt(
+                    &out(e, q, 0, 0, 0, 0),
+                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+
                 xt::noalias(view) = unit;
             }
         }
@@ -188,21 +221,26 @@ inline xt::xtensor<double,6> Matrix::I4s() const
 
 inline xt::xtensor<double,6> Matrix::I4d() const
 {
-  xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
+    xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
 
-  #pragma omp parallel
-  {
-      Tensor4 unit = Cartesian3d::I4d();
-      #pragma omp for
-      for (size_t e = 0; e < m_nelem; ++e) {
-          for (size_t q = 0; q < m_nip; ++q) {
-              auto view = xt::adapt(&out(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
-              xt::noalias(view) = unit;
-          }
-      }
-  }
+    #pragma omp parallel
+    {
+        Tensor4 unit = Cartesian3d::I4d();
 
-  return out;
+        #pragma omp for
+        for (size_t e = 0; e < m_nelem; ++e) {
+            for (size_t q = 0; q < m_nip; ++q) {
+
+                auto view = xt::adapt(
+                    &out(e, q, 0, 0, 0, 0),
+                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+
+                xt::noalias(view) = unit;
+            }
+        }
+    }
+
+    return out;
 }
 
 
