@@ -14,6 +14,8 @@ TEST_CASE("GMatElastoPlasticFiniteStrainSimo::Cartesian3d", "Cartesian3d.h")
 double K = 12.3;
 double G = 45.6;
 
+double gamma = 0.02;
+
 GM::Tensor2 F;
 F.fill(0.0);
 F(0,0) = 1.0 + gamma;
