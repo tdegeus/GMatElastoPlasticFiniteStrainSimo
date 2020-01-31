@@ -264,9 +264,9 @@ inline void Matrix::checkAllSet()
 
 
 inline void Matrix::setElastic(
-  const xt::xtensor<size_t,2>& phase,
-  double K,
-  double G)
+        const xt::xtensor<size_t,2>& phase,
+        double K,
+        double G)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(phase,0ul) || xt::equal(phase,1ul)));
@@ -374,13 +374,21 @@ inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<doubl
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto Eps = xt::adapt(&a_Eps(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
-            auto Sig = xt::adapt(&a_Sig(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
+            auto Eps = xt::adapt(
+                &a_Eps(e, q, 0, 0),
+                xt::xshape<m_ndim, m_ndim>());
+
+            auto Sig = xt::adapt(
+                &a_Sig(e, q, 0, 0),
+                xt::xshape<m_ndim, m_ndim>());
 
             switch (m_type(e,q)) {
-                case Type::Elastic:         m_Elastic        [m_index(e,q)].stress(Eps, Sig); break;
-                case Type::LinearHardening: m_LinearHardening[m_index(e,q)].stress(Eps, Sig); break;
-                default: throw std::runtime_error("Invalid type specification");
+                case Type::Elastic:
+                    m_Elastic[m_index(e,q)].stress(Eps, Sig);
+                    break;
+                case Type::LinearHardening:
+                    m_LinearHardening[m_index(e,q)].stress(Eps, Sig);
+                    break;
             }
         }
     }
@@ -403,14 +411,25 @@ inline void Matrix::tangent(
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto Eps = xt::adapt(&a_Eps(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
-            auto Sig = xt::adapt(&a_Sig(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
-            auto C = xt::adapt(&a_Tangent(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
+            auto Eps = xt::adapt(
+                &a_Eps(e, q, 0, 0),
+                xt::xshape<m_ndim, m_ndim>());
+
+            auto Sig = xt::adapt(
+                &a_Sig(e, q, 0, 0),
+                xt::xshape<m_ndim, m_ndim>());
+
+            auto C = xt::adapt(
+                &a_Tangent(e, q, 0, 0, 0, 0),
+                xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
             switch (m_type(e,q)) {
-                case Type::Elastic:         m_Elastic        [m_index(e,q)].tangent(Eps, Sig, C); break;
-                case Type::LinearHardening: m_LinearHardening[m_index(e,q)].tangent(Eps, Sig, C); break;
-                default: throw std::runtime_error("Invalid type specification");
+                case Type::Elastic:
+                    m_Elastic[m_index(e,q)].tangent(Eps, Sig, C);
+                    break;
+                case Type::LinearHardening:
+                    m_LinearHardening[m_index(e,q)].tangent(Eps, Sig, C);
+                    break;
             }
         }
     }
@@ -426,10 +445,14 @@ inline void Matrix::epsp(xt::xtensor<double,2>& epsp) const
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
+
             switch (m_type(e,q)) {
-                case Type::Elastic:         epsp(e,q) = m_Elastic        [m_index(e,q)].epsp(); break;
-                case Type::LinearHardening: epsp(e,q) = m_LinearHardening[m_index(e,q)].epsp(); break;
-                default: throw std::runtime_error("Invalid type specification");
+                case Type::Elastic:
+                    epsp(e,q) = m_Elastic[m_index(e,q)].epsp();
+                    break;
+                case Type::LinearHardening:
+                    epsp(e,q) = m_LinearHardening[m_index(e,q)].epsp();
+                    break;
             }
         }
     }
@@ -443,10 +466,13 @@ inline void Matrix::increment()
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
+
             switch (m_type(e,q)) {
-                case Type::Elastic:                                                      break;
-                case Type::LinearHardening: m_LinearHardening[m_index(e,q)].increment(); break;
-                default: throw std::runtime_error("Invalid type specification");
+                case Type::Elastic:
+                    break;
+                case Type::LinearHardening:
+                    m_LinearHardening[m_index(e,q)].increment();
+                    break;
             }
         }
     }
@@ -464,8 +490,8 @@ inline xt::xtensor<double,4> Matrix::Stress(const xt::xtensor<double,4>& Eps)
 inline std::tuple<xt::xtensor<double,4>,xt::xtensor<double,6>> Matrix::Tangent(
         const xt::xtensor<double,4>& Eps)
 {
-    xt::xtensor<double,4> Sig = xt::empty<double>({m_nelem,m_nip,m_ndim,m_ndim});
-    xt::xtensor<double,6> C = xt::empty<double>({m_nelem,m_nip,m_ndim,m_ndim,m_ndim,m_ndim});
+    xt::xtensor<double,4> Sig = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+    xt::xtensor<double,6> C = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
     this->tangent(Eps, Sig, C);
     return std::make_tuple(Sig, C);
 }

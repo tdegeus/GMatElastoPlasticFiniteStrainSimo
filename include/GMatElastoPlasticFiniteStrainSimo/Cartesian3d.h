@@ -109,7 +109,7 @@ public:
   std::tuple<Tensor2,Tensor4> Tangent(const Tensor2& F) const;
 
   // Increment (does nothing)
-  void increment();
+  void increment(); const;
 
   // Plastic strain (always zero)
   double epsp() const;
