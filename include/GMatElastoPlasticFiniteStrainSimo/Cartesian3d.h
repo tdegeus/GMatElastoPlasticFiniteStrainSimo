@@ -1,8 +1,8 @@
-/* =================================================================================================
+/*
 
 (c - MIT) T.W.J. de Geus (Tom) | www.geus.me | github.com/tdegeus/GMatElastoPlasticFiniteStrainSimo
 
-================================================================================================= */
+*/
 
 #ifndef GMATELASTOPLASTICFINITESTRAINSIMO_CARTESIAN3D_H
 #define GMATELASTOPLASTICFINITESTRAINSIMO_CARTESIAN3D_H
