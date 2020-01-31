@@ -161,22 +161,22 @@ inline int dsyevj3(double A[3][3], double Q[3][3], double w[3])
 template <class U, class V, class W>
 void eig(const U& A, V& vec, W& val)
 {
-  double a[3][3];
-  double Q[3][3];
-  double w[3];
+    double a[3][3];
+    double Q[3][3];
+    double w[3];
 
-  std::copy(A.begin(), A.end(), &a[0][0]);
+    std::copy(A.begin(), A.end(), &a[0][0]);
 
-  // Jacobi : accurate, not very fast
-  // (in practice the faster, hybrid, "dsyevh3" is too inaccurate for finite elements)
-  int succes = dsyevj3(a, Q, w);
+    // use the 'Jacobi' algorithm, which is accurate but not very fast
+    // (in practice the faster 'hybrid' "dsyevh3" is too inaccurate for finite elements)
+    int succes = dsyevj3(a, Q, w);
 
-  (void)(succes);
+    (void)(succes);
 
-  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(succes == 0);
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(succes == 0);
 
-  std::copy(&Q[0][0], &Q[0][0]+3*3, vec.begin());
-  std::copy(&w[0]   , &w[0]+3     , val.begin());
+    std::copy(&Q[0][0], &Q[0][0] + 3 * 3, vec.begin());
+    std::copy(&w[0], &w[0] + 3, val.begin());
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -184,15 +184,15 @@ void eig(const U& A, V& vec, W& val)
 template <class U, class V, class W>
 void inv_eig(const U& vec, const V& val, W& A)
 {
-  A(0,0) = val(0)*vec(0,0)*vec(0,0) + val(1)*vec(0,1)*vec(0,1) + val(2)*vec(0,2)*vec(0,2);
-  A(0,1) = val(0)*vec(0,0)*vec(1,0) + val(1)*vec(0,1)*vec(1,1) + val(2)*vec(0,2)*vec(1,2);
-  A(0,2) = val(0)*vec(0,0)*vec(2,0) + val(1)*vec(0,1)*vec(2,1) + val(2)*vec(0,2)*vec(2,2);
-  A(1,1) = val(0)*vec(1,0)*vec(1,0) + val(1)*vec(1,1)*vec(1,1) + val(2)*vec(1,2)*vec(1,2);
-  A(1,2) = val(0)*vec(1,0)*vec(2,0) + val(1)*vec(1,1)*vec(2,1) + val(2)*vec(1,2)*vec(2,2);
-  A(2,2) = val(0)*vec(2,0)*vec(2,0) + val(1)*vec(2,1)*vec(2,1) + val(2)*vec(2,2)*vec(2,2);
-  A(1,0) = A(0,1);
-  A(2,0) = A(0,2);
-  A(2,1) = A(1,2);
+    A(0,0) = val(0)*vec(0,0)*vec(0,0) + val(1)*vec(0,1)*vec(0,1) + val(2)*vec(0,2)*vec(0,2);
+    A(0,1) = val(0)*vec(0,0)*vec(1,0) + val(1)*vec(0,1)*vec(1,1) + val(2)*vec(0,2)*vec(1,2);
+    A(0,2) = val(0)*vec(0,0)*vec(2,0) + val(1)*vec(0,1)*vec(2,1) + val(2)*vec(0,2)*vec(2,2);
+    A(1,1) = val(0)*vec(1,0)*vec(1,0) + val(1)*vec(1,1)*vec(1,1) + val(2)*vec(1,2)*vec(1,2);
+    A(1,2) = val(0)*vec(1,0)*vec(2,0) + val(1)*vec(1,1)*vec(2,1) + val(2)*vec(1,2)*vec(2,2);
+    A(2,2) = val(0)*vec(2,0)*vec(2,0) + val(1)*vec(2,1)*vec(2,1) + val(2)*vec(2,2)*vec(2,2);
+    A(1,0) = A(0,1);
+    A(2,0) = A(0,2);
+    A(2,1) = A(1,2);
 }
 
 // -------------------------------------------------------------------------------------------------
