@@ -9,10 +9,10 @@ np.seterr(divide='ignore', invalid='ignore')
 
 # ---------------------------------------------- GRID ----------------------------------------------
 
-Nx     = 2           # number of voxels in x-direction
-Ny     = 1           # number of voxels in y-direction
-Nz     = 1           # number of voxels in z-direction
-shape  = [Nx,Ny,Nz]  # number of voxels as list: [Nx,Ny,Nz]
+Nx = 2 # number of voxels in x-direction
+Ny = 1 # number of voxels in y-direction
+Nz = 1 # number of voxels in z-direction
+shape = [Nx, Ny, Nz] # number of voxels as list: [Nx, Ny, Nz]
 
 # --------------------------------------- TENSOR OPERATIONS ----------------------------------------
 
