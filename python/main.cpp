@@ -56,7 +56,6 @@ sm.def("I4d",
     "Fourth order deviatoric projection tensor.",
     &SM::I4d);
 
-
 // Tensor algebra
 
 
