@@ -166,7 +166,7 @@ inline std::tuple<Tensor2,Tensor4> Elastic::Tangent(const Tensor2& F) const
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Elastic::increment() const
+inline void Elastic::increment()
 {
 }
 
