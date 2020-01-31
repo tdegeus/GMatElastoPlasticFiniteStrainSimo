@@ -33,28 +33,28 @@ namespace SM = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
 
 
 sm.def("I2",
-    "Second order unit tensor.",
-    &SM::I2);
+    &SM::I2,
+    "Second order unit tensor.");
 
 sm.def("II",
-    "Fourth order tensor with the result of the dyadic product II.",
-    &SM::II);
+    &SM::II,
+    "Fourth order tensor with the result of the dyadic product II.");
 
 sm.def("I4",
-    "Fourth order unit tensor.",
-    &SM::I4);
+    &SM::I4,
+    "Fourth order unit tensor.");
 
 sm.def("I4rt",
-    "Fourth right-transposed order unit tensor.",
-    &SM::I4rt);
+    &SM::I4rt,
+    "Fourth right-transposed order unit tensor.");
 
 sm.def("I4s",
-    "Fourth order symmetric projection tensor.",
-    &SM::I4s);
+    &SM::I4s,
+    "Fourth order symmetric projection tensor.");
 
 sm.def("I4d",
-    "Fourth order deviatoric projection tensor.",
-    &SM::I4d);
+    &SM::I4d,
+    "Fourth order deviatoric projection tensor.");
 
 // Tensor algebra
 
@@ -194,12 +194,12 @@ py::class_<SM::LinearHardening>(sm, "LinearHardening")
         py::arg("F"))
 
     .def("increment",
-        "Apply time-increment: updates the internal history variables."
-        &SM::LinearHardening::increment)
+        &SM::LinearHardening::increment,
+        "Apply time-increment: updates the internal history variables.")
 
     .def("epsp",
-        "Returns the current equivalent plastic strain.",
-        &SM::LinearHardening::epsp)
+        &SM::LinearHardening::epsp,
+        "Returns the current equivalent plastic strain.")
 
     .def("__repr__", [](const SM::LinearHardening &){
         return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.LinearHardening>"; });
@@ -350,8 +350,8 @@ py::class_<SM::Matrix>(sm, "Matrix")
         py::arg("F"))
 
     .def("Epsp",
-        "Returns matrix of current equivalent plastic strains.",
-        &SM::Matrix::Epsp)
+        &SM::Matrix::Epsp,
+        "Returns matrix of current equivalent plastic strains.")
 
     .def("__repr__", [](const SM::Matrix &){
         return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.Matrix>"; });
