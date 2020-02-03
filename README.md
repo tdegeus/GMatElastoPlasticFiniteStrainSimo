@@ -88,6 +88,7 @@ namespace GMat = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
 
 int main()
 {
+    // a single material point
     GMat::Elastic elastic(K, G);
     GMat::LinearHardening plastic(K, G, tauy0, H);
     
