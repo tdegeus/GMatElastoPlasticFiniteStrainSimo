@@ -11,9 +11,7 @@ Simo elasto-plastic model. An overview of the theory can be found in `docs/` in 
 
 - [Disclaimer](#disclaimer)
 - [Implementation](#implementation)
-    - [Overview](#overview)
-    - [Conventions](#conventions)
-    - [Example](#example)
+    - [Cartesian3d](#cartesian3d)
     - [Debugging](#debugging)
 - [Installation](#installation)
     - [C++ headers](#c-headers)
@@ -36,20 +34,25 @@ Download: [.zip file](https://github.com/tdegeus/GMatElastoPlasticFiniteStrainSi
 
 # Implementation
 
-## Overview
+## Cartesian3d
 
-The headers are meant to be self-explanatory, please inspect them:
+[Cartesian3d.h](include/GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h)
 
-* [Cartesian3d.h](include/GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h)
+### Overview
 
-## Conventions
+At the material point level different models are implemented with different classes:
 
-Naming conventions
++   `Elastic`: the elastic material model that corresponds to the elastic part of the elasto-plastic material model.
++   `LinearHardening`: the elasto-plastic material model with linear hardening. 
 
-+   Functions whose name starts with a capital (e.g. `Stress`) return their result (allocating it internally).
-+   Functions whose name starts with a small (e.g. `stress`) write to the, fully allocated, (last) input argument (avoiding re-allocation, but making the user responsible to do it properly).
+There is a `Matrix` class that allows you to combine all these material models and have a single API for a matrix of material points. 
 
-Storage conventions
+### Function names
+
++   Functions whose name starts with a capital letter (e.g. `Stress`) return their result (allocating it internally).
++   Functions whose name starts with a small letter (e.g. `stress`) write to the, fully allocated, (last) input argument (avoiding re-allocation, but making the user responsible to do it properly).
+
+### Storage
 
 +   Scalar
     ```cpp
@@ -58,7 +61,8 @@ Storage conventions
 
 +   2nd-order tensor
     ```cpp
-    Tensor2 = xt::xtensor_fixed<double, xt::xshape<3,3>>
+    xt::xtensor_fixed<double, xt::xshape<3,3>> 
+    = GMatElastoPlasticFiniteStrainSimo::Cartesian3d::Tensor2 
     ```
 
 +   List *(a)* of second order tensors *(i,j)* : *A(a,i,j)*
@@ -71,50 +75,72 @@ Storage conventions
     xt::xtensor<double,4>
     ```
 
-## Example
+### Example
 
-Only a partial example is presented here, that is meant to understand the code's structure:
+Only a partial examples are presented here, that is meant to understand the code's structure.
+
+#### Individual material points
 
 ```cpp
 #include <GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h>
 
+namespace GMat = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
+
 int main()
 {
-    // a single material point
-    // - construct
-    GMatElastoPlasticFiniteStrainSimo::Cartesian3d::Elastic elastic(K, G);
-    GMatElastoPlasticFiniteStrainSimo::Cartesian3d::LinearHardening plastic(K, G, tauy0, H);
-    // - set deformation gradient tensor (follows e.g. from FEM discretisation)
-    GMatElastoPlasticFiniteStrainSimo::Tensor2 F;
-    // - compute stress [allocate result]
-    //   (N.B. returns the Cauchy stress)
-    GMatElastoPlasticFiniteStrainSimo::Tensor2 Sig = elastic.Stress(F);
+    GMat::Elastic elastic(K, G);
+    GMat::LinearHardening plastic(K, G, tauy0, H);
+    
+    // set deformation gradient tensor (follows e.g. from FEM discretisation)
+    GMat::Tensor2 F;
+    
+    // compute stress [allocate result]
+    // (N.B. returns the Cauchy stress)
+    GMat::Tensor2 Sig = elastic.Stress(F);
     ...
-    // - compute stress [no allocation]
-    //   (N.B. returns the Cauchy stress)
+
+    // compute stress [no allocation]
+    // (N.B. returns the Cauchy stress)
     elastic.stress(F, Sig); 
     ...
 
-    // a matrix, of shape [nelem, nip], of material points
-    // - construct
-    GMatElastoPlasticFiniteStrainSimo::Cartesian3d::Elastic matrix(nelem, nip);
-    // - set material
-    matrix.setElastic(I, K, G);
-    matrix.setLinearHardening(I, K, G, tauy0, H);
-    // - set deformation gradient tensor (follows e.g. from FEM discretisation)
-    xt::xtensor<double,4> F = xt::empty<double>({nelem, nip, 3ul, 3ul});
-    ... 
-    // - compute stress [allocate result]
-    //   (N.B. returns the Cauchy stress)
-    Sig = matrix.Stress(F);
-    ...
-    // - compute stress [no allocation]
-    //   (N.B. returns the Cauchy stress)
-    matrix.stress(F, Sig); 
-    ...
+    return 0;
 }
 ```
->   See [Cartesian2d.h](include/GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h) for more details.
+
+#### Matrix of material points
+
+```cpp
+#include <GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h>
+
+namespace GMat = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
+
+int main()
+{
+    // a matrix, of shape [nelem, nip], of material points
+    GMat::Elastic matrix(nelem, nip);
+
+    // set materials
+    matrix.setElastic(I, K, G);
+    matrix.setLinearHardening(I, K, G, tauy0, H);
+
+    // set deformation gradient tensor (follows e.g. from FEM discretisation)
+    xt::xtensor<double,4> F = xt::empty<double>({nelem, nip, 3ul, 3ul});
+    ... 
+
+    // compute stress [allocate result]
+    // (N.B. returns the Cauchy stress)
+    xt::xtensor<double,4> Sig = matrix.Stress(F);
+    ...
+
+    // compute stress [no allocation]
+    // (N.B. returns the Cauchy stress)
+    matrix.stress(F, Sig); 
+    ...
+
+    return 0;
+}
+```
 
 ## Debugging
 
@@ -122,7 +148,7 @@ To enable assertions define `GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT` **
 
 Using *CMake* this can be done using the `GMatElastoPlasticFiniteStrainSimo::assert` target (see [below](#using-cmake)).
 
->   To also enable assertions of *xtensor* also define `XTENSOR_ENABLE_ASSERT` **before** including *xtensor* (and *GMatElastoPlasticFiniteStrainSimo*) for the first time. 
+>   To also enable assertions of *xtensor* additionally define `XTENSOR_ENABLE_ASSERT` **before** including *xtensor* (and *GMatElastoPlasticFiniteStrainSimo*) for the first time. 
 >   
 >   Using *CMake* all assertions are enabled using the `GMatElastoPlasticFiniteStrainSimo::debug` target (see [below](#using-cmake)).
 
@@ -219,7 +245,7 @@ The following targets are available:
 
 ### Optimization
 
-It is advised to think about compiler optimization and about enabling *xsimd. In *CMake* this can be done using the `xtensor::optimize` and `xtensor::use_xsimd` targets. The above example then becomes:
+It is advised to think about compiler optimization and about enabling *xsimd*. In *CMake* this can be done using the `xtensor::optimize` and `xtensor::use_xsimd` targets. The above example then becomes:
 
 ```cmake
 cmake_minimum_required(VERSION 3.1)
