@@ -206,6 +206,7 @@ inline xt::xtensor<double,6> Matrix::I4s() const
         #pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {
             for (size_t q = 0; q < m_nip; ++q) {
+
                 auto view = xt::adapt(
                     &out(e, q, 0, 0, 0, 0),
                     xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
@@ -359,12 +360,12 @@ inline void Matrix::setLinearHardening(
 
   for (size_t e = 0; e < m_nelem; ++e) {
       for (size_t q = 0; q < m_nip; ++q) {
-          if (phase(e,q) == 1ul) {
-              m_type(e,q) = Type::LinearHardening;
-              m_index(e,q) = m_LinearHardening.size();
-              m_LinearHardening.push_back(
-                  LinearHardening(K(idx(e,q)), G(idx(e,q)), tauy0(idx(e,q)), H(idx(e,q))));
-          }
+            if (phase(e,q) == 1ul) {
+                m_type(e,q) = Type::LinearHardening;
+                m_index(e,q) = m_LinearHardening.size();
+                m_LinearHardening.push_back(
+                    LinearHardening(K(idx(e,q)), G(idx(e,q)), tauy0(idx(e,q)), H(idx(e,q))));
+            }
       }
   }
 

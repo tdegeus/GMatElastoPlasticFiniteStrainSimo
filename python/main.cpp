@@ -356,6 +356,5 @@ py::class_<SM::Matrix>(sm, "Matrix")
     .def("__repr__", [](const SM::Matrix &){
         return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.Matrix>"; });
 
-
 }
 

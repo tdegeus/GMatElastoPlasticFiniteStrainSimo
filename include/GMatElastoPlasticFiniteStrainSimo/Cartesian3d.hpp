@@ -116,7 +116,7 @@ inline Tensor2 Strain(const Tensor2 &F)
 
     // eigenvalue decomposition of "B"
     Tensor2 vec;
-    Vector  B_val;
+    Vector B_val;
     eig(B, vec, B_val);
 
     // logarithmic strain "Eps == 0.5 * ln(Be)" (in diagonalised form)

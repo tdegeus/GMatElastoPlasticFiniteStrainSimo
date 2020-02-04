@@ -117,21 +117,21 @@ inline void Elastic::tangent(const Tensor2& F, T&& Sig, S&& C) const
     for (size_t m = 0; m < 3; ++m) {
         for (size_t n = 0; n < 3; ++n) {
 
-          double gc = 2.0 * (Eps_val(n) - Eps_val(m)) / (Be_val(n) - Be_val(m));
+            double gc = 2.0 * (Eps_val(n) - Eps_val(m)) / (Be_val(n) - Be_val(m));
 
-          if (Be_val(m) == Be_val(n)) {
-              gc = 1.0 / Be_val(m);
-          }
+            if (Be_val(m) == Be_val(n)) {
+                gc = 1.0 / Be_val(m);
+            }
 
-          for (size_t i = 0; i < 3; ++i) {
-              for (size_t j = 0; j < 3; ++j) {
-                  for (size_t k = 0; k < 3; ++k) {
-                      for (size_t l = 0; l < 3; ++l) {
-                          dlnBe_dBe(i,j,k,l) += gc * vec(i,m) * vec(j,n) * vec(k,m) * vec(l,n);
-                      }
-                  }
-              }
-          }
+            for (size_t i = 0; i < 3; ++i) {
+                for (size_t j = 0; j < 3; ++j) {
+                    for (size_t k = 0; k < 3; ++k) {
+                        for (size_t l = 0; l < 3; ++l) {
+                            dlnBe_dBe(i,j,k,l) += gc * vec(i,m) * vec(j,n) * vec(k,m) * vec(l,n);
+                        }
+                    }
+                }
+            }
         }
     }
 
