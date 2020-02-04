@@ -114,7 +114,7 @@ public:
     void tangent(const Tensor2& F, U&& Sig, V&& C) const;
 
     // Stress & Tangent (auto allocation)
-    std::tuple<Tensor2,Tensor4> Tangent(const Tensor2& F) const;
+    std::tuple<Tensor2, Tensor4> Tangent(const Tensor2& F) const;
 
 private:
 
@@ -149,7 +149,7 @@ public:
     void tangent(const Tensor2& F, U&& Sig, V&& C);
 
     // Stress & Tangent (auto allocation)
-    std::tuple<Tensor2,Tensor4> Tangent(const Tensor2& F);
+    std::tuple<Tensor2, Tensor4> Tangent(const Tensor2& F);
 
     // Increment (update plastic strain)
     void increment();

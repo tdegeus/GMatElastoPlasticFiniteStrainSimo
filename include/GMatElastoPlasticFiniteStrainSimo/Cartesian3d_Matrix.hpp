@@ -57,10 +57,10 @@ inline xt::xtensor<double,2> Matrix::K() const
 
             switch (m_type(e, q)) {
                 case Type::Elastic:
-                out(e, q) = m_Elastic[m_index(e, q)].K();
+                    out(e, q) = m_Elastic[m_index(e, q)].K();
                     break;
                 case Type::LinearHardening:
-                out(e, q) = m_LinearHardening[m_index(e, q)].K();
+                    out(e, q) = m_LinearHardening[m_index(e, q)].K();
                     break;
             }
         }
@@ -82,10 +82,10 @@ inline xt::xtensor<double,2> Matrix::G() const
 
             switch (m_type(e, q)) {
                 case Type::Elastic:
-                out(e, q) = m_Elastic[m_index(e, q)].G();
+                    out(e, q) = m_Elastic[m_index(e, q)].G();
                     break;
                 case Type::LinearHardening:
-                out(e, q) = m_LinearHardening[m_index(e, q)].G();
+                    out(e, q) = m_LinearHardening[m_index(e, q)].G();
                     break;
             }
         }
@@ -385,10 +385,10 @@ inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<doubl
 
             switch (m_type(e, q)) {
                 case Type::Elastic:
-                m_Elastic[m_index(e, q)].stress(Eps, Sig);
+                    m_Elastic[m_index(e, q)].stress(Eps, Sig);
                     break;
                 case Type::LinearHardening:
-                m_LinearHardening[m_index(e, q)].stress(Eps, Sig);
+                    m_LinearHardening[m_index(e, q)].stress(Eps, Sig);
                     break;
             }
         }
@@ -399,7 +399,7 @@ inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<doubl
 inline void Matrix::tangent(
         const xt::xtensor<double,4>& a_Eps,
               xt::xtensor<double,4>& a_Sig,
-              xt::xtensor<double,6>& a_Tangent)
+              xt::xtensor<double,6>& a_C)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
@@ -407,8 +407,8 @@ inline void Matrix::tangent(
         std::decay_t<decltype(a_Eps)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim}));
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(a_Eps.shape() == a_Sig.shape());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        a_Tangent.shape() ==
-        std::decay_t<decltype(a_Tangent)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim}));
+        a_C.shape() ==
+        std::decay_t<decltype(a_C)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -417,16 +417,15 @@ inline void Matrix::tangent(
             auto Eps = xt::adapt(&a_Eps(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
             auto Sig = xt::adapt(&a_Sig(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
 
-            auto C = xt::adapt(
-                &a_Tangent(e, q, 0, 0, 0, 0),
-                xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+            auto C =
+                xt::adapt(&a_C(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
             switch (m_type(e, q)) {
                 case Type::Elastic:
-                m_Elastic[m_index(e, q)].tangent(Eps, Sig, C);
+                    m_Elastic[m_index(e, q)].tangent(Eps, Sig, C);
                     break;
                 case Type::LinearHardening:
-                m_LinearHardening[m_index(e, q)].tangent(Eps, Sig, C);
+                    m_LinearHardening[m_index(e, q)].tangent(Eps, Sig, C);
                     break;
             }
         }
@@ -446,10 +445,10 @@ inline void Matrix::epsp(xt::xtensor<double,2>& epsp) const
 
             switch (m_type(e, q)) {
                 case Type::Elastic:
-                epsp(e, q) = 0.0;
+                    epsp(e, q) = 0.0;
                     break;
                 case Type::LinearHardening:
-                epsp(e, q) = m_LinearHardening[m_index(e, q)].epsp();
+                    epsp(e, q) = m_LinearHardening[m_index(e, q)].epsp();
                     break;
             }
         }
@@ -469,7 +468,7 @@ inline void Matrix::increment()
                 case Type::Elastic:
                     break;
                 case Type::LinearHardening:
-                m_LinearHardening[m_index(e, q)].increment();
+                    m_LinearHardening[m_index(e, q)].increment();
                     break;
             }
         }
@@ -485,7 +484,7 @@ inline xt::xtensor<double,4> Matrix::Stress(const xt::xtensor<double,4>& Eps)
 }
 
 
-inline std::tuple<xt::xtensor<double,4>,xt::xtensor<double,6>> Matrix::Tangent(
+inline std::tuple<xt::xtensor<double,4>, xt::xtensor<double,6>> Matrix::Tangent(
         const xt::xtensor<double,4>& Eps)
 {
     xt::xtensor<double,4> Sig = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});

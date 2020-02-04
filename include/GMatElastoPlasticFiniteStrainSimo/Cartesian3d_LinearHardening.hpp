@@ -79,7 +79,7 @@ inline void LinearHardening::stress(const Tensor2& F, T&& Sig)
     // decomposed trial Kirchhoff stress (in diagonalised form), and trial equivalent stress
     double taum = 3.0 * m_K * epsem;
     Vector Taud_val = 2.0 * m_G * Epsed_val;
-  double taueq = std::sqrt(1.5 * xt::sum(xt::pow(Taud_val, 2.0))[0]);
+    double taueq = std::sqrt(1.5 * xt::sum(xt::pow(Taud_val, 2.0))[0]);
 
     // evaluate the yield surface
     double phi = taueq - (m_tauy0 + m_H * m_epsp_t);
@@ -149,7 +149,7 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
     // decomposed trial Kirchhoff stress (in diagonalised form), and trial equivalent stress
     double taum = 3.0 * m_K * epsem;
     Vector Taud_val = 2.0 * m_G * Epsed_val;
-  double taueq = std::sqrt(1.5 * xt::sum(xt::pow(Taud_val, 2.0))[0]);
+    double taueq = std::sqrt(1.5 * xt::sum(xt::pow(Taud_val, 2.0))[0]);
 
     // evaluate the yield surface
     double phi = taueq - (m_tauy0 + m_H * m_epsp_t);
