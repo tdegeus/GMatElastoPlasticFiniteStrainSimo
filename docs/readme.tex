@@ -120,7 +120,7 @@ where $\bm{N}$ is the Prandtl-Reuss flow vector, which is defined through normal
 \paragraph{Trial state}
 
 The path-dependent model is solved by discretising in pseudo-time.
-Accordingly, the deformation is applied in small steps, transforming Eq.~\eqref{eq:history} in
+Accordingly, the deformation is applied in small steps, transforming \cref{eq:history} in
 \begin{equation}
     \varepsilon_\mathrm{p} = \sum \Delta \gamma^t
 \end{equation}
@@ -153,7 +153,7 @@ $\Phi(\T{\tau},\varepsilon_\mathrm{p}) = 0$.
 \paragraph{Return mapping}
 
 Given the plastic strain update $\Delta \gamma$ (whose value will be specified below),
-following Eq.~\eqref{eq:flow-rule} the actual elastic strain
+following \cref{eq:flow-rule} the actual elastic strain
 \begin{equation}
     \T{\varepsilon}_\mathrm{e} = \ST{\T{\varepsilon}}_\mathrm{e} - \Delta \gamma \,\ST{\T{N}}
 \end{equation}
@@ -209,7 +209,7 @@ Linear hardening corresponds to the following evolution of yield stress:
     = \tau_\mathrm{y0} + H \varepsilon_\mathrm{p}
 \end{equation}
 In this case, enforcing the yield function (as in
-Eq.~\eqref{eq:return-map:yield-function}) corresponds to:
+\cref{eq:return-map:yield-function}) corresponds to:
 \begin{equation}
     \ST{\Phi} - 3 G \Delta \gamma + H \Delta \gamma = 0
 \end{equation}
@@ -310,7 +310,7 @@ whereby the different constituents are:
             \TT{C}_\mathrm{ep} \quad\mathrm{otherwise}
         \end{cases}
     \end{equation}
-    where $\TT{C}_\mathrm{e}$ is defined in Eq.~\eqref{eq:tangent:elas}, and
+    where $\TT{C}_\mathrm{e}$ is defined in \cref{eq:tangent:elas}, and
     \begin{align}
         2 \; \TT{C}_\mathrm{ep}
         &= \left[
@@ -371,7 +371,7 @@ The pull-back of the Kirchhoff stress to the first Piola-Kirchhoff stress reads
     \T{P}_{(i)} = \bm{\tau}_{(i)} \cdot \T{F}^{-T}_{(i)}
 \end{equation}
 This expression can be used to pull-back the consistent tangent operator,
-which in the form of Eq.~\eqref{eq:tangent} reads:
+which in the form of \cref{eq:tangent} reads:
 \begin{equation}
     \delta \bm{\tau}
     =
@@ -383,7 +383,7 @@ which in the form of Eq.~\eqref{eq:tangent} reads:
 The subscript $\vec{x}$ indicates that the tangent is defined
 in the last-known iterative configuration.
 In terms of a variation in the first Piola-Kirchhoff stress,
-as in Eq.~\eqref{eq:pull-back}, can be rewritten as
+as in \cref{eq:pull-back}, can be rewritten as
 %
 \begin{equation}
     \delta \T{P}^T
@@ -403,14 +403,14 @@ We now have a tangent of the form:
     \label{eq:tangent:ref}
 \end{equation}
 This form can be conveniently used to perform a consistency check.
-The result of such a check is shown in Fig.~\ref{fig:consistency}.
+The result of such a check is shown in \cref{fig:consistency}.
 
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.5\textwidth]{examples/consistency}
     \caption{
         Result of the consistency check
-        (performed in the reference configuration, as in Eq.~\eqref{eq:tangent:ref})}
+        (performed in the reference configuration, as in \cref{eq:tangent:ref})}
     \label{fig:consistency}
 \end{figure}
 
