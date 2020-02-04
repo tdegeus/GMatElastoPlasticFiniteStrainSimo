@@ -55,12 +55,12 @@ inline xt::xtensor<double,2> Matrix::K() const
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
 
-            switch (m_type(e,q)) {
+            switch (m_type(e, q)) {
                 case Type::Elastic:
-                    out(e,q) = m_Elastic[m_index(e,q)].K();
+                out(e, q) = m_Elastic[m_index(e, q)].K();
                     break;
                 case Type::LinearHardening:
-                    out(e,q) = m_LinearHardening[m_index(e,q)].K();
+                out(e, q) = m_LinearHardening[m_index(e, q)].K();
                     break;
             }
         }
@@ -80,12 +80,12 @@ inline xt::xtensor<double,2> Matrix::G() const
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
 
-            switch (m_type(e,q)) {
+            switch (m_type(e, q)) {
                 case Type::Elastic:
-                    out(e,q) = m_Elastic[m_index(e,q)].G();
+                out(e, q) = m_Elastic[m_index(e, q)].G();
                     break;
                 case Type::LinearHardening:
-                    out(e,q) = m_LinearHardening[m_index(e,q)].G();
+                out(e, q) = m_LinearHardening[m_index(e, q)].G();
                     break;
             }
         }
@@ -106,11 +106,7 @@ inline xt::xtensor<double,4> Matrix::I2() const
         #pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {
             for (size_t q = 0; q < m_nip; ++q) {
-
-                auto view = xt::adapt(
-                    &out(e, q, 0, 0),
-                    xt::xshape<m_ndim, m_ndim>());
-
+                auto view = xt::adapt(&out(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
                 xt::noalias(view) = unit;
             }
         }
@@ -132,9 +128,8 @@ inline xt::xtensor<double,6> Matrix::II() const
         for (size_t e = 0; e < m_nelem; ++e) {
             for (size_t q = 0; q < m_nip; ++q) {
 
-                auto view = xt::adapt(
-                    &out(e, q, 0, 0, 0, 0),
-                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+                auto view =
+                    xt::adapt(&out(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
                 xt::noalias(view) = unit;
           }
@@ -157,9 +152,8 @@ inline xt::xtensor<double,6> Matrix::I4() const
         for (size_t e = 0; e < m_nelem; ++e) {
             for (size_t q = 0; q < m_nip; ++q) {
 
-                auto view = xt::adapt(
-                    &out(e, q, 0, 0, 0, 0),
-                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+                auto view =
+                    xt::adapt(&out(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
                 xt::noalias(view) = unit;
             }
@@ -182,9 +176,8 @@ inline xt::xtensor<double,6> Matrix::I4rt() const
         for (size_t e = 0; e < m_nelem; ++e) {
             for (size_t q = 0; q < m_nip; ++q) {
 
-                auto view = xt::adapt(
-                    &out(e, q, 0, 0, 0, 0),
-                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+                auto view =
+                    xt::adapt(&out(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
                 xt::noalias(view) = unit;
             }
@@ -207,9 +200,8 @@ inline xt::xtensor<double,6> Matrix::I4s() const
         for (size_t e = 0; e < m_nelem; ++e) {
             for (size_t q = 0; q < m_nip; ++q) {
 
-                auto view = xt::adapt(
-                    &out(e, q, 0, 0, 0, 0),
-                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+                auto view =
+                    xt::adapt(&out(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
                 xt::noalias(view) = unit;
             }
@@ -232,9 +224,8 @@ inline xt::xtensor<double,6> Matrix::I4d() const
         for (size_t e = 0; e < m_nelem; ++e) {
             for (size_t q = 0; q < m_nip; ++q) {
 
-                auto view = xt::adapt(
-                    &out(e, q, 0, 0, 0, 0),
-                    xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+                auto view =
+                    xt::adapt(&out(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
                 xt::noalias(view) = unit;
             }
@@ -279,9 +270,10 @@ inline void Matrix::setElastic(
         double G)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(phase,0ul) || xt::equal(phase,1ul)));
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(\
-        xt::all(xt::equal(xt::where(xt::equal(phase,1ul), m_type, Type::Unset), Type::Unset)));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        xt::all(xt::equal(phase, 0ul) || xt::equal(phase, 1ul)));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        xt::all(xt::equal(xt::where(xt::equal(phase, 1ul), m_type, Type::Unset), Type::Unset)));
 
     m_type = xt::where(xt::equal(phase, 1ul), Type::Elastic, m_type);
     m_index = xt::where(xt::equal(phase, 1ul), m_Elastic.size(), m_index);
@@ -298,15 +290,16 @@ inline void Matrix::setLinearHardening(
         double H)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(phase,0ul) || xt::equal(phase,1ul)));
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(\
-        xt::all(xt::equal(xt::where(xt::equal(phase,1ul), m_type, Type::Unset), Type::Unset)));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        xt::all(xt::equal(phase, 0ul) || xt::equal(phase, 1ul)));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        xt::all(xt::equal(xt::where(xt::equal(phase, 1ul), m_type, Type::Unset), Type::Unset)));
 
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
-            if (phase(e,q) == 1ul) {
-                m_type(e,q) = Type::LinearHardening;
-                m_index(e,q) = m_LinearHardening.size();
+            if (phase(e, q) == 1ul) {
+                m_type(e, q) = Type::LinearHardening;
+                m_index(e, q) = m_LinearHardening.size();
                 m_LinearHardening.push_back(LinearHardening(K, G, tauy0, H));
             }
         }
@@ -326,9 +319,10 @@ inline void Matrix::setElastic(
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == G.size());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == idx.shape());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(phase,0ul) || xt::equal(phase,1ul)));
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(\
-        xt::all(xt::equal(xt::where(xt::equal(phase,1ul), m_type, Type::Unset), Type::Unset)));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        xt::all(xt::equal(phase, 0ul) || xt::equal(phase, 1ul)));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        xt::all(xt::equal(xt::where(xt::equal(phase, 1ul), m_type, Type::Unset), Type::Unset)));
 
     m_type = xt::where(xt::equal(phase, 1ul), Type::Elastic, m_type);
     m_index = xt::where(xt::equal(phase, 1ul), m_Elastic.size() + idx, m_index);
@@ -354,17 +348,18 @@ inline void Matrix::setLinearHardening(
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == H.size());
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == idx.shape());
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
-  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(phase,0ul) || xt::equal(phase,1ul)));
-  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(\
-      xt::all(xt::equal(xt::where(xt::equal(phase,1ul), m_type, Type::Unset), Type::Unset)));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        xt::all(xt::equal(phase, 0ul) || xt::equal(phase, 1ul)));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        xt::all(xt::equal(xt::where(xt::equal(phase, 1ul), m_type, Type::Unset), Type::Unset)));
 
   for (size_t e = 0; e < m_nelem; ++e) {
       for (size_t q = 0; q < m_nip; ++q) {
-            if (phase(e,q) == 1ul) {
-                m_type(e,q) = Type::LinearHardening;
-                m_index(e,q) = m_LinearHardening.size();
+            if (phase(e, q) == 1ul) {
+                m_type(e, q) = Type::LinearHardening;
+                m_index(e, q) = m_LinearHardening.size();
                 m_LinearHardening.push_back(
-                    LinearHardening(K(idx(e,q)), G(idx(e,q)), tauy0(idx(e,q)), H(idx(e,q))));
+                    LinearHardening(K(idx(e, q)), G(idx(e, q)), tauy0(idx(e, q)), H(idx(e, q))));
             }
       }
   }
@@ -376,7 +371,8 @@ inline void Matrix::setLinearHardening(
 inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<double,4>& a_Sig)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(a_Eps.shape() == \
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        a_Eps.shape() ==
         std::decay_t<decltype(a_Eps)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim}));
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(a_Eps.shape() == a_Sig.shape());
 
@@ -384,20 +380,15 @@ inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<doubl
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto Eps = xt::adapt(
-                &a_Eps(e, q, 0, 0),
-                xt::xshape<m_ndim, m_ndim>());
+            auto Eps = xt::adapt(&a_Eps(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
+            auto Sig = xt::adapt(&a_Sig(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
 
-            auto Sig = xt::adapt(
-                &a_Sig(e, q, 0, 0),
-                xt::xshape<m_ndim, m_ndim>());
-
-            switch (m_type(e,q)) {
+            switch (m_type(e, q)) {
                 case Type::Elastic:
-                    m_Elastic[m_index(e,q)].stress(Eps, Sig);
+                m_Elastic[m_index(e, q)].stress(Eps, Sig);
                     break;
                 case Type::LinearHardening:
-                    m_LinearHardening[m_index(e,q)].stress(Eps, Sig);
+                m_LinearHardening[m_index(e, q)].stress(Eps, Sig);
                     break;
             }
         }
@@ -411,34 +402,31 @@ inline void Matrix::tangent(
               xt::xtensor<double,6>& a_Tangent)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(a_Eps.shape() == \
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        a_Eps.shape() ==
         std::decay_t<decltype(a_Eps)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim}));
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(a_Eps.shape() == a_Sig.shape());
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(a_Tangent.shape() == \
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        a_Tangent.shape() ==
         std::decay_t<decltype(a_Tangent)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto Eps = xt::adapt(
-                &a_Eps(e, q, 0, 0),
-                xt::xshape<m_ndim, m_ndim>());
-
-            auto Sig = xt::adapt(
-                &a_Sig(e, q, 0, 0),
-                xt::xshape<m_ndim, m_ndim>());
+            auto Eps = xt::adapt(&a_Eps(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
+            auto Sig = xt::adapt(&a_Sig(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
 
             auto C = xt::adapt(
                 &a_Tangent(e, q, 0, 0, 0, 0),
                 xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
-            switch (m_type(e,q)) {
+            switch (m_type(e, q)) {
                 case Type::Elastic:
-                    m_Elastic[m_index(e,q)].tangent(Eps, Sig, C);
+                m_Elastic[m_index(e, q)].tangent(Eps, Sig, C);
                     break;
                 case Type::LinearHardening:
-                    m_LinearHardening[m_index(e,q)].tangent(Eps, Sig, C);
+                m_LinearHardening[m_index(e, q)].tangent(Eps, Sig, C);
                     break;
             }
         }
@@ -449,19 +437,19 @@ inline void Matrix::tangent(
 inline void Matrix::epsp(xt::xtensor<double,2>& epsp) const
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(epsp.shape() == \
-        std::decay_t<decltype(epsp)>::shape_type({m_nelem, m_nip}));
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
+        epsp.shape() == std::decay_t<decltype(epsp)>::shape_type({m_nelem, m_nip}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
 
-            switch (m_type(e,q)) {
+            switch (m_type(e, q)) {
                 case Type::Elastic:
-                    epsp(e,q) = 0.0;
+                epsp(e, q) = 0.0;
                     break;
                 case Type::LinearHardening:
-                    epsp(e,q) = m_LinearHardening[m_index(e,q)].epsp();
+                epsp(e, q) = m_LinearHardening[m_index(e, q)].epsp();
                     break;
             }
         }
@@ -477,11 +465,11 @@ inline void Matrix::increment()
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
 
-            switch (m_type(e,q)) {
+            switch (m_type(e, q)) {
                 case Type::Elastic:
                     break;
                 case Type::LinearHardening:
-                    m_LinearHardening[m_index(e,q)].increment();
+                m_LinearHardening[m_index(e, q)].increment();
                     break;
             }
         }
@@ -514,7 +502,7 @@ inline xt::xtensor<double,2> Matrix::Epsp() const
     return out;
 }
 
-
-}} // namespace ...
+} // namespace Cartesian3d
+} // namespace GMatElastoPlasticFiniteStrainSimo
 
 #endif

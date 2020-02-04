@@ -7,12 +7,12 @@
 #ifndef GMATELASTOPLASTICFINITESTRAINSIMO_CARTESIAN3D_EIGVALS_HPP
 #define GMATELASTOPLASTICFINITESTRAINSIMO_CARTESIAN3D_EIGVALS_HPP
 
-#include <stdio.h>
-#include <math.h>
 #include "Cartesian3d.h"
+#include <math.h>
+#include <stdio.h>
 
 // Macros
-#define SQR(x) ((x)*(x)) // x^2
+#define SQR(x) ((x) * (x)) // x^2
 
 namespace GMatElastoPlasticFiniteStrainSimo {
 namespace Cartesian3d {
@@ -62,30 +62,28 @@ inline int dsyevj3(double A[3][3], double Q[3][3], double w[3])
     double thresh;
 
     // Initialize Q to the identity matrix
-    for (int i=0; i < n; i++)
-    {
+    for (int i = 0; i < n; i++) {
         Q[i][i] = 1.0;
-        for (int j=0; j < i; j++)
+        for (int j = 0; j < i; j++)
             Q[i][j] = Q[j][i] = 0.0;
     }
 
     // Initialize w to diag(A)
-    for (int i=0; i < n; i++)
+    for (int i = 0; i < n; i++)
         w[i] = A[i][i];
 
     // Calculate SQR(tr(A))
     sd = 0.0;
-    for (int i=0; i < n; i++)
+    for (int i = 0; i < n; i++)
         sd += fabs(w[i]);
     sd = SQR(sd);
 
     // Main iteration loop
-    for (int nIter=0; nIter < 50; nIter++)
-    {
+    for (int nIter = 0; nIter < 50; nIter++) {
         // Test for convergence
         so = 0.0;
-        for (int p=0; p < n; p++)
-            for (int q=p+1; q < n; q++)
+        for (int p = 0; p < n; p++)
+            for (int q = p + 1; q < n; q++)
                 so += fabs(A[p][q]);
         if (so == 0.0)
           return 0;
@@ -96,9 +94,8 @@ inline int dsyevj3(double A[3][3], double Q[3][3], double w[3])
             thresh = 0.0;
 
         // Do sweep
-        for (int p=0; p < n; p++)
-            for (int q=p+1; q < n; q++)
-            {
+        for (int p = 0; p < n; p++)
+            for (int q = p + 1; q < n; q++) {
                 g = 100.0 * fabs(A[p][q]);
                 if (nIter > 4  &&  fabs(w[p]) + g == fabs(w[p])
                                &&  fabs(w[q]) + g == fabs(w[q]))
@@ -121,7 +118,7 @@ inline int dsyevj3(double A[3][3], double Q[3][3], double w[3])
                         else
                             t = 1.0 / (sqrt(1.0 + SQR(theta)) + theta);
                     }
-                    c = 1.0/sqrt(1.0 + SQR(t));
+                    c = 1.0 / sqrt(1.0 + SQR(t));
                     s = t * c;
                     z = t * A[p][q];
 
@@ -129,31 +126,27 @@ inline int dsyevj3(double A[3][3], double Q[3][3], double w[3])
                     A[p][q] = 0.0;
                     w[p] -= z;
                     w[q] += z;
-                    for (int r=0; r < p; r++)
-                    {
+                    for (int r = 0; r < p; r++) {
                         t = A[r][p];
-                        A[r][p] = c*t - s*A[r][q];
-                        A[r][q] = s*t + c*A[r][q];
+                        A[r][p] = c * t - s * A[r][q];
+                        A[r][q] = s * t + c * A[r][q];
                     }
-                    for (int r=p+1; r < q; r++)
-                    {
+                    for (int r = p + 1; r < q; r++) {
                         t = A[p][r];
-                        A[p][r] = c*t - s*A[r][q];
-                        A[r][q] = s*t + c*A[r][q];
+                        A[p][r] = c * t - s * A[r][q];
+                        A[r][q] = s * t + c * A[r][q];
                     }
-                    for (int r=q+1; r < n; r++)
-                    {
+                    for (int r = q + 1; r < n; r++) {
                         t = A[p][r];
-                        A[p][r] = c*t - s*A[q][r];
-                        A[q][r] = s*t + c*A[q][r];
+                        A[p][r] = c * t - s * A[q][r];
+                        A[q][r] = s * t + c * A[q][r];
                     }
 
                     // Update eigenvectors
-                    for (int r=0; r < n; r++)
-                    {
+                    for (int r = 0; r < n; r++) {
                         t = Q[r][p];
-                        Q[r][p] = c*t - s*Q[r][q];
-                        Q[r][q] = s*t + c*Q[r][q];
+                        Q[r][p] = c * t - s * Q[r][q];
+                        Q[r][q] = s * t + c * Q[r][q];
                     }
                 }
             }
@@ -199,8 +192,8 @@ void inv_eig(const U& vec, const V& val, W& A)
     A(2,1) = A(1,2);
 }
 
-
-}} // namespace ...
+} // namespace Cartesian3d
+} // namespace GMatElastoPlasticFiniteStrainSimo
 
 #endif
 

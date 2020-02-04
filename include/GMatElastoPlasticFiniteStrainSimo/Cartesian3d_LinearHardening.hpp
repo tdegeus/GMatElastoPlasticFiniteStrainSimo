@@ -79,7 +79,7 @@ inline void LinearHardening::stress(const Tensor2& F, T&& Sig)
     // decomposed trial Kirchhoff stress (in diagonalised form), and trial equivalent stress
     double taum = 3.0 * m_K * epsem;
     Vector Taud_val = 2.0 * m_G * Epsed_val;
-    double taueq = std::sqrt(1.5 * xt::sum(xt::pow(Taud_val,2.0))[0]);
+  double taueq = std::sqrt(1.5 * xt::sum(xt::pow(Taud_val, 2.0))[0]);
 
     // evaluate the yield surface
     double phi = taueq - (m_tauy0 + m_H * m_epsp_t);
@@ -149,7 +149,7 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
     // decomposed trial Kirchhoff stress (in diagonalised form), and trial equivalent stress
     double taum = 3.0 * m_K * epsem;
     Vector Taud_val = 2.0 * m_G * Epsed_val;
-    double taueq = std::sqrt(1.5 * xt::sum(xt::pow(Taud_val,2.0))[0]);
+  double taueq = std::sqrt(1.5 * xt::sum(xt::pow(Taud_val, 2.0))[0]);
 
     // evaluate the yield surface
     double phi = taueq - (m_tauy0 + m_H * m_epsp_t);
@@ -214,7 +214,7 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
           a0 = 0.0;
         // - Elasto-plastic tangent
         dTau_dlnBe
-            = (0.5 * (m_K - 2.0/3.0 * m_G) + a0 * m_G) * II
+            = (0.5 * (m_K - 2.0 / 3.0 * m_G) + a0 * m_G) * II
             + (1.0 - 3.0 * a0) * m_G * I4s + 2.0 * m_G * (a0 - a1) * NN;
     }
 
@@ -262,7 +262,7 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
 }
 
 
-inline std::tuple<Tensor2,Tensor4> LinearHardening::Tangent(const Tensor2& F)
+inline std::tuple<Tensor2, Tensor4> LinearHardening::Tangent(const Tensor2& F)
 {
     Tensor2 Sig;
     Tensor4 C;
@@ -274,7 +274,7 @@ inline std::tuple<Tensor2,Tensor4> LinearHardening::Tangent(const Tensor2& F)
 inline void LinearHardening::increment()
 {
     m_epsp_t = m_epsp;
-    xt::noalias(m_F_t ) = m_F;
+    xt::noalias(m_F_t) = m_F;
     xt::noalias(m_Be_t) = m_Be;
 }
 
@@ -285,6 +285,7 @@ inline double LinearHardening::epsp() const
 }
 
 
-}} // namespace ...
+} // namespace Cartesian3d
+} // namespace GMatElastoPlasticFiniteStrainSimo
 
 #endif

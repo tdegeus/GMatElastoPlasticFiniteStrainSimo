@@ -304,12 +304,11 @@ private:
     // Shape
     size_t m_nelem;
     size_t m_nip;
-    static const size_t m_ndim=3;
+    static const size_t m_ndim = 3;
 
     // Internal check
-    bool m_allSet=false;
+    bool m_allSet = false;
     void checkAllSet();
-
 };
 
 // Internal support functions
@@ -370,7 +369,8 @@ template <class U, class V, class W>
 void inv_eig(const U& vec, const V& val, W& A);
 
 
-}} // namespace ...
+} // namespace Cartesian3d
+} // namespace GMatElastoPlasticFiniteStrainSimo
 
 
 #include "Cartesian3d_eigvals.hpp"

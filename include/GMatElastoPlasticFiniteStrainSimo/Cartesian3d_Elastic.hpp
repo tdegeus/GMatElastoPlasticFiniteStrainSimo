@@ -154,7 +154,7 @@ inline void Elastic::tangent(const Tensor2& F, T&& Sig, S&& C) const
 }
 
 
-inline std::tuple<Tensor2,Tensor4> Elastic::Tangent(const Tensor2& F) const
+inline std::tuple<Tensor2, Tensor4> Elastic::Tangent(const Tensor2& F) const
 {
     Tensor2 Sig;
     Tensor4 C;
@@ -162,7 +162,7 @@ inline std::tuple<Tensor2,Tensor4> Elastic::Tangent(const Tensor2& F) const
     return std::make_tuple(Sig, C);
 }
 
-
-}} // namespace ...
+} // namespace Cartesian3d
+} // namespace GMatElastoPlasticFiniteStrainSimo
 
 #endif
