@@ -29,22 +29,22 @@ who presented this model extended with damage.
 \paragraph{Key tensors}
 
 \begin{itemize}
-  %
+
     \item \emph{Finger tensor} (also known by the name \emph{left Cauchy-Green deformation})
     \begin{equation}
         \T{b} \equiv \T{F} \cdot \T{F}^T
     \end{equation}
-    %
+
     \item \emph{Left stretch tensor}:
     \begin{equation}
         \T{v} \equiv \sqrt{\T{b}}
     \end{equation}
-    %
+
     \item \emph{Hencky’s logarithmic strain tensor}:
     \begin{equation}
         \T{\varepsilon} \equiv \ln \T{v} = \tfrac{1}{2} \ln \T{b}
     \end{equation}
-    %
+
     \item \emph{Kirchhoff stress tensor} $\T{\tau}$, which is related to the
     \emph{Cauchy stress tensor} $\T{\sigma}$ as follows:
     \begin{equation}
@@ -54,7 +54,7 @@ who presented this model extended with damage.
     \begin{equation}
         J \equiv \det \T{F}
     \end{equation}
-  %
+
 \end{itemize}
 
 \paragraph{Model}
@@ -144,7 +144,7 @@ is used to define the trial state
 which gives rise to some $\ST{\T{\tau}}$ and corresponding $\ST{\tau}_\mathrm{eq}$ and $\ST{\T{N}}$.
 The trial value for the yield function follows as:
 \begin{equation}
-  \ST{\Phi} = \ST{\tau}_\mathrm{eq} - \tau_\mathrm{y}(\ST{\varepsilon}_\mathrm{p})
+    \ST{\Phi} = \ST{\tau}_\mathrm{eq} - \tau_\mathrm{y}(\ST{\varepsilon}_\mathrm{p})
 \end{equation}
 For any $\ST{\Phi} \leq 0$ the trial state is simply the physical admissible state.
 Otherwise one has to look for a $\Delta \gamma$ such that
@@ -232,7 +232,6 @@ Solving for $\Delta \gamma$ results in
 \paragraph{Basic definition}
 
 The consistent tangent operator, defined in the current configuration, is of the form
-%
 \begin{equation}
     \delta \bm{\tau}
     =
@@ -276,8 +275,8 @@ This corresponds to:
 
 \begin{framed}
 \begin{quote}
-  It should now be obvious why the implementation outputs the Cauchy stress
-  $\T{\sigma} = \T{\tau} / J$ and $(\TT{K}) / J$.
+    It should now be obvious why the implementation outputs the Cauchy stress
+    $\T{\sigma} = \T{\tau} / J$ and $(\TT{K}) / J$.
 \end{quote}
 \end{framed}
 
@@ -379,12 +378,10 @@ which in the form of \cref{eq:tangent} reads:
     : \T{F}_{(i)}^{-T} \cdot \delta \T{F}^T
     \label{eq:pull-back}
 \end{equation}
-%
 The subscript $\vec{x}$ indicates that the tangent is defined
 in the last-known iterative configuration.
 In terms of a variation in the first Piola-Kirchhoff stress,
 as in \cref{eq:pull-back}, can be rewritten as
-%
 \begin{equation}
     \delta \T{P}^T
     =
@@ -395,7 +392,6 @@ as in \cref{eq:pull-back}, can be rewritten as
     \big]
     : \delta \T{F}^T
 \end{equation}
-%
 Note that this pull-back does not introduce additional approximations.
 We now have a tangent of the form:
 \begin{equation}
@@ -410,7 +406,7 @@ The result of such a check is shown in \cref{fig:consistency}.
     \includegraphics[width=.5\textwidth]{examples/consistency}
     \caption{
         Result of the consistency check
-        (performed in the reference configuration, as in \cref{eq:tangent:ref})}
+        (performed in the reference configuration, as in \cref{eq:tangent:ref}).}
     \label{fig:consistency}
 \end{figure}
 
