@@ -15,8 +15,8 @@
 
 namespace py = pybind11;
 
-
-PYBIND11_MODULE(GMatElastoPlasticFiniteStrainSimo, m) {
+PYBIND11_MODULE(GMatElastoPlasticFiniteStrainSimo, m)
+{
 
 m.doc() = "Elasto-plastic material model";
 
@@ -28,36 +28,21 @@ py::module sm = m.def_submodule("Cartesian3d", "3d Cartesian coordinates");
 
 namespace SM = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
 
-
 // Unit tensors
 
+sm.def("I2", &SM::I2, "Second order unit tensor.");
 
-sm.def("I2",
-    &SM::I2,
-    "Second order unit tensor.");
+sm.def("II", &SM::II, "Fourth order tensor with the result of the dyadic product II.");
 
-sm.def("II",
-    &SM::II,
-    "Fourth order tensor with the result of the dyadic product II.");
+sm.def("I4", &SM::I4, "Fourth order unit tensor.");
 
-sm.def("I4",
-    &SM::I4,
-    "Fourth order unit tensor.");
+sm.def("I4rt", &SM::I4rt, "Fourth right-transposed order unit tensor.");
 
-sm.def("I4rt",
-    &SM::I4rt,
-    "Fourth right-transposed order unit tensor.");
+sm.def("I4s", &SM::I4s, "Fourth order symmetric projection tensor.");
 
-sm.def("I4s",
-    &SM::I4s,
-    "Fourth order symmetric projection tensor.");
-
-sm.def("I4d",
-    &SM::I4d,
-    "Fourth order deviatoric projection tensor.");
+sm.def("I4d", &SM::I4d, "Fourth order deviatoric projection tensor.");
 
 // Tensor algebra
-
 
 sm.def("Hydrostatic",
     py::overload_cast<const SM::Tensor2&>(&SM::Hydrostatic),
@@ -74,7 +59,6 @@ sm.def("Hydrostatic",
     "Hydrostatic part of a 2nd-order tensor. Returns matrix of scalars.",
     py::arg("A"));
 
-
 sm.def("Deviatoric",
     py::overload_cast<const SM::Tensor2&>(&SM::Deviatoric),
     "Deviatoric part of a 2nd-order tensor. Returns 2nd-order tensor.",
@@ -89,7 +73,6 @@ sm.def("Deviatoric",
     py::overload_cast<const xt::xtensor<double,4>&>(&SM::Deviatoric),
     "Deviatoric part of a 2nd-order tensor. Returns matrix 2nd-order tensors.",
     py::arg("A"));
-
 
 sm.def("Epseq",
     py::overload_cast<const SM::Tensor2&>(&SM::Epseq),
@@ -106,7 +89,6 @@ sm.def("Epseq",
     "Equivalent strain deviator. Returns matrix of scalars.",
     py::arg("Eps"));
 
-
 sm.def("Sigeq",
     py::overload_cast<const SM::Tensor2&>(&SM::Sigeq),
     "Equivalent stress deviator. Returns scalar.",
@@ -122,24 +104,15 @@ sm.def("Sigeq",
     "Equivalent stress deviator. Returns matrix of scalars.",
     py::arg("Sig"));
 
-
 // Material point: Elastic
-
 
 py::class_<SM::Elastic>(sm, "Elastic")
 
-    .def(py::init<double, double>(),
-        "Elastic material point",
-        py::arg("K"),
-        py::arg("G"))
+    .def(py::init<double, double>(), "Elastic material point", py::arg("K"), py::arg("G"))
 
-    .def("K",
-        &SM::Elastic::K,
-        "Returns the bulk modulus")
+    .def("K", &SM::Elastic::K, "Returns the bulk modulus")
 
-    .def("G",
-        &SM::Elastic::G,
-        "Returns the shear modulus")
+    .def("G", &SM::Elastic::G, "Returns the shear modulus")
 
     .def("Stress",
         &SM::Elastic::Stress,
@@ -148,15 +121,15 @@ py::class_<SM::Elastic>(sm, "Elastic")
 
     .def("Tangent",
         &SM::Elastic::Tangent,
-        "Returns tangent stiffness tensor (fourth order), for a given deformation gradient tensor.",
+        "Returns tangent stiffness tensor (fourth order), for a given deformation gradient "
+        "tensor.",
         py::arg("F"))
 
-    .def("__repr__", [](const SM::Elastic &){
-        return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.Elastic>"; });
-
+    .def("__repr__", [](const SM::Elastic&) {
+        return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.Elastic>";
+    });
 
 // Material point: LinearHardening
-
 
 py::class_<SM::LinearHardening>(sm, "LinearHardening")
 
@@ -167,21 +140,13 @@ py::class_<SM::LinearHardening>(sm, "LinearHardening")
         py::arg("epsy0"),
         py::arg("H"))
 
-    .def("K",
-        &SM::LinearHardening::K,
-        "Returns the bulk modulus")
+    .def("K", &SM::LinearHardening::K, "Returns the bulk modulus")
 
-    .def("G",
-        &SM::LinearHardening::G,
-        "Returns the shear modulus")
+    .def("G", &SM::LinearHardening::G, "Returns the shear modulus")
 
-    .def("tauy0",
-        &SM::LinearHardening::tauy0,
-        "Returns the initial yield stress")
+    .def("tauy0", &SM::LinearHardening::tauy0, "Returns the initial yield stress")
 
-    .def("H",
-        &SM::LinearHardening::H,
-        "Returns the hardening modulus")
+    .def("H", &SM::LinearHardening::H, "Returns the hardening modulus")
 
     .def("Stress",
         &SM::LinearHardening::Stress,
@@ -190,23 +155,21 @@ py::class_<SM::LinearHardening>(sm, "LinearHardening")
 
     .def("Tangent",
         &SM::LinearHardening::Tangent,
-        "Returns tangent stiffness tensor (fourth order), for a given deformation gradient tensor.",
+        "Returns tangent stiffness tensor (fourth order), for a given deformation gradient "
+        "tensor.",
         py::arg("F"))
 
     .def("increment",
         &SM::LinearHardening::increment,
         "Apply time-increment: updates the internal history variables.")
 
-    .def("epsp",
-        &SM::LinearHardening::epsp,
-        "Returns the current equivalent plastic strain.")
+    .def("epsp", &SM::LinearHardening::epsp, "Returns the current equivalent plastic strain.")
 
-    .def("__repr__", [](const SM::LinearHardening &){
-        return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.LinearHardening>"; });
-
+    .def("__repr__", [](const SM::LinearHardening&) {
+        return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.LinearHardening>";
+    });
 
 // Material identifier
-
 
 py::module smm = sm.def_submodule("Type", "Type enumerator");
 
@@ -216,9 +179,7 @@ py::enum_<SM::Type::Value>(smm, "Type")
     .value("LinearHardening", SM::Type::LinearHardening)
     .export_values();
 
-
 // Matrix
-
 
 py::class_<SM::Matrix>(sm, "Matrix")
 
@@ -227,37 +188,23 @@ py::class_<SM::Matrix>(sm, "Matrix")
         py::arg("nelem"),
         py::arg("nip"))
 
-    .def("ndim",
-        &SM::Matrix::ndim,
-        "Return number of (tensor) dimensions.")
+    .def("ndim", &SM::Matrix::ndim, "Return number of (tensor) dimensions.")
 
-    .def("nelem",
-        &SM::Matrix::nelem,
-        "Return number of elements (matrix rows).")
+    .def("nelem", &SM::Matrix::nelem, "Return number of elements (matrix rows).")
 
-    .def("nip",
-        &SM::Matrix::nip,
-        "Return number of integration points (matrix columns).")
+    .def("nip", &SM::Matrix::nip, "Return number of integration points (matrix columns).")
 
-    .def("K",
-        &SM::Matrix::K,
-        "Return matrix with bulk moduli.")
+    .def("K", &SM::Matrix::K, "Return matrix with bulk moduli.")
 
-    .def("G",
-        &SM::Matrix::G,
-        "Return matrix with shear moduli.")
+    .def("G", &SM::Matrix::G, "Return matrix with shear moduli.")
 
-    .def("I2",
-        &SM::Matrix::I2,
-        "Return matrix with second order unit tensors.")
+    .def("I2", &SM::Matrix::I2, "Return matrix with second order unit tensors.")
 
     .def("II",
         &SM::Matrix::II,
         "Return matrix with fourth order tensors with the result of the dyadic product II.")
 
-    .def("I4",
-        &SM::Matrix::I4,
-        "Return matrix with fourth order unit tensors.")
+    .def("I4", &SM::Matrix::I4, "Return matrix with fourth order unit tensors.")
 
     .def("I4rt",
         &SM::Matrix::I4rt,
@@ -271,9 +218,7 @@ py::class_<SM::Matrix>(sm, "Matrix")
         &SM::Matrix::I4d,
         "Return matrix with fourth order deviatoric projection tensors.")
 
-    .def("type",
-        &SM::Matrix::type,
-        "Return matrix with material types.")
+    .def("type", &SM::Matrix::type, "Return matrix with material types.")
 
     .def("isPlastic",
         &SM::Matrix::isPlastic,
@@ -284,22 +229,16 @@ py::class_<SM::Matrix>(sm, "Matrix")
         "Check that all matrix entries are set. Throws if any unset point is found.")
 
     .def("setElastic",
-        py::overload_cast<
-            const xt::xtensor<size_t,2>&,
-            double,
-            double>(&SM::Matrix::setElastic),
+        py::overload_cast<const xt::xtensor<size_t,2>&, double, double>(
+            &SM::Matrix::setElastic),
         "Set specific entries 'Elastic'.",
         py::arg("I"),
         py::arg("K"),
         py::arg("G"))
 
     .def("setLinearHardening",
-        py::overload_cast<
-            const xt::xtensor<size_t,2>&,
-            double,
-            double,
-            double,
-            double>(&SM::Matrix::setLinearHardening),
+        py::overload_cast<const xt::xtensor<size_t,2>&, double, double, double, double>(
+            &SM::Matrix::setLinearHardening),
         "Set specific entries 'LinearHardening'.",
         py::arg("I"),
         py::arg("K"),
@@ -346,15 +285,13 @@ py::class_<SM::Matrix>(sm, "Matrix")
 
     .def("Tangent",
         &SM::Matrix::Tangent,
-        "Returns matrix of tangent stiffness tensors, for a given matrix of deformation gradient tensors.",
+        "Returns matrix of tangent stiffness tensors, for a given matrix of deformation "
+        "gradient tensors.",
         py::arg("F"))
 
-    .def("Epsp",
-        &SM::Matrix::Epsp,
-        "Returns matrix of current equivalent plastic strains.")
+    .def("Epsp", &SM::Matrix::Epsp, "Returns matrix of current equivalent plastic strains.")
 
-    .def("__repr__", [](const SM::Matrix &){
-        return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.Matrix>"; });
-
+    .def("__repr__", [](const SM::Matrix&) {
+        return "<GMatElastoPlasticFiniteStrainSimo.Cartesian3d.Matrix>";
+    });
 }
-
