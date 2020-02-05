@@ -12,39 +12,30 @@
 namespace GMatElastoPlasticFiniteStrainSimo {
 namespace Cartesian3d {
 
-
-inline LinearHardening::LinearHardening(double K, double G, double tauy0, double H) :
-        m_K(K),
-        m_G(G),
-        m_tauy0(tauy0),
-        m_H(H)
+inline LinearHardening::LinearHardening(double K, double G, double tauy0, double H)
+    : m_K(K), m_G(G), m_tauy0(tauy0), m_H(H)
 {
 }
-
 
 inline double LinearHardening::K() const
 {
     return m_K;
 }
 
-
 inline double LinearHardening::G() const
 {
     return m_G;
 }
-
 
 inline double LinearHardening::tauy0() const
 {
     return m_tauy0;
 }
 
-
 inline double LinearHardening::H() const
 {
     return m_H;
 }
-
 
 template <class T>
 inline void LinearHardening::stress(const Tensor2& F, T&& Sig)
@@ -105,14 +96,12 @@ inline void LinearHardening::stress(const Tensor2& F, T&& Sig)
     xt::noalias(m_F) = F;
 }
 
-
 inline Tensor2 LinearHardening::Stress(const Tensor2& F)
 {
     Tensor2 Sig;
     this->stress(F, Sig);
     return Sig;
 }
-
 
 template <class T, class S>
 inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
@@ -213,9 +202,8 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
         else
           a0 = 0.0;
         // - Elasto-plastic tangent
-        dTau_dlnBe
-            = (0.5 * (m_K - 2.0 / 3.0 * m_G) + a0 * m_G) * II
-            + (1.0 - 3.0 * a0) * m_G * I4s + 2.0 * m_G * (a0 - a1) * NN;
+        dTau_dlnBe = (0.5 * (m_K - 2.0 / 3.0 * m_G) + a0 * m_G) * II +
+                     (1.0 - 3.0 * a0) * m_G * I4s + 2.0 * m_G * (a0 - a1) * NN;
     }
 
     // linearization of the logarithmic strain
@@ -235,7 +223,8 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
                 for (size_t k = 0; k < 3; ++k) {
                     for (size_t j = 0; j < 3; ++j) {
                         for (size_t i = 0; i < 3; ++i) {
-                            dlnBe_dBe(i,j,k,l) += gc * vec(i,m) * vec(j,n) * vec(k,m) * vec(l,n);
+                            dlnBe_dBe(i, j, k, l) +=
+                                gc * vec(i, m) * vec(j, n) * vec(k, m) * vec(l, n);
                         }
                     }
                 }
@@ -261,7 +250,6 @@ inline void LinearHardening::tangent(const Tensor2& F, T&& Sig, S&& C)
     xt::noalias(C) = (Kgeo + Kmat) / J;
 }
 
-
 inline std::tuple<Tensor2, Tensor4> LinearHardening::Tangent(const Tensor2& F)
 {
     Tensor2 Sig;
@@ -270,7 +258,6 @@ inline std::tuple<Tensor2, Tensor4> LinearHardening::Tangent(const Tensor2& F)
     return std::make_tuple(Sig, C);
 }
 
-
 inline void LinearHardening::increment()
 {
     m_epsp_t = m_epsp;
@@ -278,12 +265,10 @@ inline void LinearHardening::increment()
     xt::noalias(m_Be_t) = m_Be;
 }
 
-
 inline double LinearHardening::epsp() const
 {
     return m_epsp;
 }
-
 
 } // namespace Cartesian3d
 } // namespace GMatElastoPlasticFiniteStrainSimo

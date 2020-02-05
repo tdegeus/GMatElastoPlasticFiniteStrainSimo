@@ -12,14 +12,12 @@
 namespace GMatElastoPlasticFiniteStrainSimo {
 namespace Cartesian3d {
 
-
 inline Tensor2 I2()
 {
     return Tensor2({{1.0, 0.0, 0.0},
                     {0.0, 1.0, 0.0},
                     {0.0, 0.0, 1.0}});
 }
-
 
 inline Tensor4 II()
 {
@@ -41,7 +39,6 @@ inline Tensor4 II()
     return out;
 }
 
-
 inline Tensor4 I4()
 {
     Tensor4 out;
@@ -61,7 +58,6 @@ inline Tensor4 I4()
 
     return out;
 }
-
 
 inline Tensor4 I4rt()
 {
@@ -83,32 +79,27 @@ inline Tensor4 I4rt()
     return out;
 }
 
-
 inline Tensor4 I4s()
 {
     return 0.5 * (I4() + I4rt());
 }
-
 
 inline Tensor4 I4d()
 {
     return I4s() - II() / 3.0;
 }
 
-
 inline double Hydrostatic(const Tensor2& A)
 {
     return trace(A) / 3.0;
 }
-
 
 inline Tensor2 Deviatoric(const Tensor2& A)
 {
     return A - trace(A) / 3.0 * I2();
 }
 
-
-inline Tensor2 Strain(const Tensor2 &F)
+inline Tensor2 Strain(const Tensor2& F)
 {
     // Finger tensor: B = F . F^T
     Tensor2 B;
@@ -129,20 +120,17 @@ inline Tensor2 Strain(const Tensor2 &F)
     return Eps;
 }
 
-
 inline double Epseq(const Tensor2& Eps)
 {
     Tensor2 Epsd = Eps - trace(Eps) / 3.0 * I2();
     return std::sqrt(2.0 / 3.0 * A2_ddot_B2(Epsd, Epsd));
 }
 
-
 inline double Sigeq(const Tensor2& Sig)
 {
     Tensor2 Sigd = Sig - trace(Sig) / 3.0 * I2();
     return std::sqrt(1.5 * A2_ddot_B2(Sigd, Sigd));
 }
-
 
 inline void hydrostatic(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Am)
 {
@@ -158,7 +146,6 @@ inline void hydrostatic(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& A
         }
     }
 }
-
 
 inline void deviatoric(const xt::xtensor<double,3>& A, xt::xtensor<double,3>& Ad)
 {
@@ -177,7 +164,6 @@ inline void deviatoric(const xt::xtensor<double,3>& A, xt::xtensor<double,3>& Ad
         }
     }
 }
-
 
 inline void strain(const xt::xtensor<double,3>& F, xt::xtensor<double,3>& Eps)
 {
@@ -203,7 +189,6 @@ inline void strain(const xt::xtensor<double,3>& F, xt::xtensor<double,3>& Eps)
     }
 }
 
-
 inline void epseq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
@@ -222,7 +207,6 @@ inline void epseq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
     }
 }
 
-
 inline void sigeq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
@@ -240,14 +224,12 @@ inline void sigeq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
     }
 }
 
-
 inline xt::xtensor<double,1> Hydrostatic(const xt::xtensor<double,3>& A)
 {
     xt::xtensor<double,1> Am = xt::empty<double>({A.shape(0)});
     Cartesian3d::hydrostatic(A, Am);
     return Am;
 }
-
 
 inline xt::xtensor<double,3> Deviatoric(const xt::xtensor<double,3>& A)
 {
@@ -256,14 +238,12 @@ inline xt::xtensor<double,3> Deviatoric(const xt::xtensor<double,3>& A)
     return Ad;
 }
 
-
 inline xt::xtensor<double,3> Strain(const xt::xtensor<double,3>& F)
 {
     xt::xtensor<double,3> Eps = xt::empty<double>(F.shape());
     Cartesian3d::strain(F, Eps);
     return Eps;
 }
-
 
 inline xt::xtensor<double,1> Epseq(const xt::xtensor<double,3>& A)
 {
@@ -272,14 +252,12 @@ inline xt::xtensor<double,1> Epseq(const xt::xtensor<double,3>& A)
     return Aeq;
 }
 
-
 inline xt::xtensor<double,1> Sigeq(const xt::xtensor<double,3>& A)
 {
     xt::xtensor<double,1> Aeq = xt::empty<double>({A.shape(0)});
     Cartesian3d::sigeq(A, Aeq);
     return Aeq;
 }
-
 
 inline void hydrostatic(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Am)
 {
@@ -297,7 +275,6 @@ inline void hydrostatic(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& A
         }
     }
 }
-
 
 inline void deviatoric(const xt::xtensor<double,4>& A, xt::xtensor<double,4>& Ad)
 {
@@ -318,7 +295,6 @@ inline void deviatoric(const xt::xtensor<double,4>& A, xt::xtensor<double,4>& Ad
         }
     }
 }
-
 
 inline void strain(const xt::xtensor<double,4>& F, xt::xtensor<double,4>& Eps)
 {
@@ -346,7 +322,6 @@ inline void strain(const xt::xtensor<double,4>& F, xt::xtensor<double,4>& Eps)
     }
 }
 
-
 inline void epseq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
@@ -366,7 +341,6 @@ inline void epseq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
         }
     }
 }
-
 
 inline void sigeq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 {
@@ -388,14 +362,12 @@ inline void sigeq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
     }
 }
 
-
 inline xt::xtensor<double,2> Hydrostatic(const xt::xtensor<double,4>& A)
 {
     xt::xtensor<double,2> Am = xt::empty<double>({A.shape(0), A.shape(1)});
     Cartesian3d::hydrostatic(A, Am);
     return Am;
 }
-
 
 inline xt::xtensor<double,4> Deviatoric(const xt::xtensor<double,4>& A)
 {
@@ -404,14 +376,12 @@ inline xt::xtensor<double,4> Deviatoric(const xt::xtensor<double,4>& A)
     return Ad;
 }
 
-
 inline xt::xtensor<double,4> Strain(const xt::xtensor<double,4>& F)
 {
     xt::xtensor<double,4> Eps = xt::empty<double>(F.shape());
     Cartesian3d::strain(F, Eps);
     return Eps;
 }
-
 
 inline xt::xtensor<double,2> Epseq(const xt::xtensor<double,4>& A)
 {
@@ -420,7 +390,6 @@ inline xt::xtensor<double,2> Epseq(const xt::xtensor<double,4>& A)
     return Aeq;
 }
 
-
 inline xt::xtensor<double,2> Sigeq(const xt::xtensor<double,4>& A)
 {
     xt::xtensor<double,2> Aeq = xt::empty<double>({A.shape(0), A.shape(1)});
@@ -428,13 +397,11 @@ inline xt::xtensor<double,2> Sigeq(const xt::xtensor<double,4>& A)
     return Aeq;
 }
 
-
 template <class U>
 inline double trace(const U& A)
 {
     return A(0, 0) + A(1, 1) + A(2, 2);
 }
-
 
 template <class U, class V, class W>
 inline void A2_dyadic_B2(const U& A, const V& B, W& C)
@@ -452,7 +419,6 @@ inline void A2_dyadic_B2(const U& A, const V& B, W& C)
     }
 }
 
-
 template <class U, class V>
 inline double A2_ddot_B2(const U& A, const V& B)
 {
@@ -461,7 +427,6 @@ inline double A2_ddot_B2(const U& A, const V& B)
         + 2.0 * A(0,2) * B(0,2)
         + 2.0 * A(1,2) * B(1,2);
 }
-
 
 template <class U, class V, class W>
 inline void A2_dot_B2(const U& A, const V& B, W& C)
@@ -476,7 +441,6 @@ inline void A2_dot_B2(const U& A, const V& B, W& C)
     C(2,1) = A(2,0) * B(0,1) + A(2,1) * B(1,1) + A(2,2) * B(2,1);
     C(2,2) = A(2,0) * B(0,2) + A(2,1) * B(1,2) + A(2,2) * B(2,2);
 }
-
 
 template <class U, class V, class W>
 inline void A4_dot_B2(const U& A, const V& B, W& C)
@@ -495,7 +459,6 @@ inline void A4_dot_B2(const U& A, const V& B, W& C)
         }
     }
 }
-
 
 template <class U, class V, class W, class X>
 inline void A4_ddot_B4_ddot_C4(const U& A, const V& B, const W& C, X& D)
@@ -521,7 +484,6 @@ inline void A4_ddot_B4_ddot_C4(const U& A, const V& B, const W& C, X& D)
     }
 }
 
-
 template <class U, class V, class W, class X>
 inline void A2_dot_B2_dot_C2T(const U& A, const V& B, const W& C, X& D)
 {
@@ -538,7 +500,6 @@ inline void A2_dot_B2_dot_C2T(const U& A, const V& B, const W& C, X& D)
     }
 }
 
-
 template <class U>
 inline double det(const U& A)
 {
@@ -546,7 +507,6 @@ inline double det(const U& A)
         (A(0,0) * A(1,1) * A(2,2) + A(0,1) * A(1,2) * A(2,0) + A(0,2) * A(1,0) * A(2,1)) -
         (A(0,2) * A(1,1) * A(2,0) + A(0,1) * A(1,0) * A(2,2) + A(0,0) * A(1,2) * A(2,1));
 }
-
 
 template <class U, class V>
 inline void inv(const U& A, V& Ainv)
@@ -563,7 +523,6 @@ inline void inv(const U& A, V& Ainv)
     Ainv(2,1) = (A(0,1) * A(2,0) - A(0,0) * A(2,1)) / D;
     Ainv(2,2) = (A(0,0) * A(1,1) - A(0,1) * A(1,0)) / D;
 }
-
 
 template <class U, class V>
 inline void finger(const U& F, V& B)

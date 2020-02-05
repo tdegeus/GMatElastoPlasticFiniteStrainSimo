@@ -97,21 +97,16 @@ inline int dsyevj3(double A[3][3], double Q[3][3], double w[3])
         for (int p = 0; p < n; p++)
             for (int q = p + 1; q < n; q++) {
                 g = 100.0 * fabs(A[p][q]);
-                if (nIter > 4  &&  fabs(w[p]) + g == fabs(w[p])
-                               &&  fabs(w[q]) + g == fabs(w[q]))
-                {
+                if (nIter > 4 && fabs(w[p]) + g == fabs(w[p]) && fabs(w[q]) + g == fabs(w[q])) {
                     A[p][q] = 0.0;
                 }
-                else if (fabs(A[p][q]) > thresh)
-                {
+                else if (fabs(A[p][q]) > thresh) {
                     // Calculate Jacobi transformation
                     h = w[q] - w[p];
-                    if (fabs(h) + g == fabs(h))
-                    {
+                    if (fabs(h) + g == fabs(h)) {
                         t = A[p][q] / h;
                     }
-                    else
-                    {
+                    else {
                         theta = 0.5 * h / A[p][q];
                         if (theta < 0.0)
                             t = -1.0 / (sqrt(1.0 + SQR(theta)) - theta);
@@ -176,7 +171,6 @@ void eig(const U& A, V& vec, W& val)
     std::copy(&Q[0][0], &Q[0][0] + 3 * 3, vec.begin());
     std::copy(&w[0], &w[0] + 3, val.begin());
 }
-
 
 template <class U, class V, class W>
 void inv_eig(const U& vec, const V& val, W& A)

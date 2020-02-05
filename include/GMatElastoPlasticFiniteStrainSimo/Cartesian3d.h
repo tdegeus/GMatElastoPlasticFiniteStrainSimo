@@ -27,7 +27,6 @@ inline Tensor4 I4rt();
 inline Tensor4 I4s();
 inline Tensor4 I4d();
 
-
 // Hydrostatic stress/strain
 
 inline double Hydrostatic(const Tensor2& A);
@@ -38,7 +37,7 @@ inline Tensor2 Deviatoric(const Tensor2& A);
 
 // Logarithmic strain given a deformation gradient
 
-inline Tensor2 Strain(const Tensor2 &F);
+inline Tensor2 Strain(const Tensor2& F);
 
 // Equivalent deviatoric stress/stress
 
@@ -182,7 +181,6 @@ private:
         = Tensor2({{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}});
 };
 
-
 struct Type {
     enum Value {
         Unset,
@@ -284,8 +282,8 @@ public:
     xt::xtensor<double,4> Stress(
         const xt::xtensor<double,4>& F);
 
-    std::tuple<xt::xtensor<double,4>,xt::xtensor<double,6>> Tangent(
-        const xt::xtensor<double,4>& F);
+    std::tuple<xt::xtensor<double,4>, xt::xtensor<double,6>> 
+    Tangent(const xt::xtensor<double,4>& F);
 
     xt::xtensor<double,2> Epsp() const;
 
@@ -368,7 +366,6 @@ void eig(const U& A, V& vec, W& val);
 template <class U, class V, class W>
 void inv_eig(const U& vec, const V& val, W& A);
 
-
 } // namespace Cartesian3d
 } // namespace GMatElastoPlasticFiniteStrainSimo
 
@@ -378,6 +375,5 @@ void inv_eig(const U& vec, const V& val, W& A);
 #include "Cartesian3d_Elastic.hpp"
 #include "Cartesian3d_LinearHardening.hpp"
 #include "Cartesian3d_Matrix.hpp"
-
 
 #endif

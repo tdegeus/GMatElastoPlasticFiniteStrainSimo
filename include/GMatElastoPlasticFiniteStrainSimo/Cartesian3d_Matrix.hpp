@@ -12,7 +12,6 @@
 namespace GMatElastoPlasticFiniteStrainSimo {
 namespace Cartesian3d {
 
-
 inline Matrix::Matrix(size_t nelem, size_t nip) : m_nelem(nelem), m_nip(nip)
 {
     m_type = xt::ones<size_t>({m_nelem, m_nip}) * Type::Unset;
@@ -20,30 +19,25 @@ inline Matrix::Matrix(size_t nelem, size_t nip) : m_nelem(nelem), m_nip(nip)
     m_allSet = false;
 }
 
-
 inline size_t Matrix::ndim() const
 {
     return m_ndim;
 }
-
 
 inline size_t Matrix::nelem() const
 {
     return m_nelem;
 }
 
-
 inline size_t Matrix::nip() const
 {
     return m_nip;
 }
 
-
 inline xt::xtensor<size_t,2> Matrix::type() const
 {
     return m_type;
 }
-
 
 inline xt::xtensor<double,2> Matrix::K() const
 {
@@ -69,7 +63,6 @@ inline xt::xtensor<double,2> Matrix::K() const
     return out;
 }
 
-
 inline xt::xtensor<double,2> Matrix::G() const
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
@@ -94,7 +87,6 @@ inline xt::xtensor<double,2> Matrix::G() const
     return out;
 }
 
-
 inline xt::xtensor<double,4> Matrix::I2() const
 {
     xt::xtensor<double,4> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
@@ -115,10 +107,10 @@ inline xt::xtensor<double,4> Matrix::I2() const
     return out;
 }
 
-
 inline xt::xtensor<double,6> Matrix::II() const
 {
-    xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
+    xt::xtensor<double,6> out =
+        xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
 
     #pragma omp parallel
     {
@@ -139,13 +131,13 @@ inline xt::xtensor<double,6> Matrix::II() const
     return out;
 }
 
-
 inline xt::xtensor<double,6> Matrix::I4() const
 {
-  xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
+    xt::xtensor<double,6> out =
+        xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
 
-  #pragma omp parallel
-  {
+    #pragma omp parallel
+    {
         Tensor4 unit = Cartesian3d::I4();
 
         #pragma omp for
@@ -163,10 +155,10 @@ inline xt::xtensor<double,6> Matrix::I4() const
     return out;
 }
 
-
 inline xt::xtensor<double,6> Matrix::I4rt() const
 {
-    xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
+    xt::xtensor<double,6> out =
+        xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
 
     #pragma omp parallel
     {
@@ -187,10 +179,10 @@ inline xt::xtensor<double,6> Matrix::I4rt() const
     return out;
 }
 
-
 inline xt::xtensor<double,6> Matrix::I4s() const
 {
-    xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
+    xt::xtensor<double,6> out =
+        xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
 
     #pragma omp parallel
     {
@@ -211,10 +203,10 @@ inline xt::xtensor<double,6> Matrix::I4s() const
     return out;
 }
 
-
 inline xt::xtensor<double,6> Matrix::I4d() const
 {
-    xt::xtensor<double,6> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
+    xt::xtensor<double,6> out =
+        xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
 
     #pragma omp parallel
     {
@@ -235,7 +227,6 @@ inline xt::xtensor<double,6> Matrix::I4d() const
     return out;
 }
 
-
 inline xt::xtensor<size_t,2> Matrix::isPlastic() const
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
@@ -244,14 +235,12 @@ inline xt::xtensor<size_t,2> Matrix::isPlastic() const
     return out;
 }
 
-
 inline void Matrix::check() const
 {
     if (xt::any(xt::equal(m_type, Type::Unset))) {
         throw std::runtime_error("Points without material found");
     }
 }
-
 
 inline void Matrix::checkAllSet()
 {
@@ -263,10 +252,9 @@ inline void Matrix::checkAllSet()
     }
 }
 
-
 inline void Matrix::setElastic(
-        const xt::xtensor<size_t,2>& phase,
-        double K,
+        const xt::xtensor<size_t,2>& phase, 
+        double K, 
         double G)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
@@ -280,7 +268,6 @@ inline void Matrix::setElastic(
     this->checkAllSet();
     m_Elastic.push_back(Elastic(K, G));
 }
-
 
 inline void Matrix::setLinearHardening(
         const xt::xtensor<size_t,2>& phase,
@@ -308,14 +295,13 @@ inline void Matrix::setLinearHardening(
     this->checkAllSet();
 }
 
-
 inline void Matrix::setElastic(
         const xt::xtensor<size_t,2>& phase,
         const xt::xtensor<size_t,2>& idx,
         const xt::xtensor<double,1>& K,
         const xt::xtensor<double,1>& G)
 {
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::amax(idx)[0] == K.size()-1);
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::amax(idx)[0] == K.size() - 1);
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == G.size());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == idx.shape());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
@@ -333,7 +319,6 @@ inline void Matrix::setElastic(
     }
 }
 
-
 inline void Matrix::setLinearHardening(
         const xt::xtensor<size_t,2>& phase,
         const xt::xtensor<size_t,2>& idx,
@@ -342,7 +327,7 @@ inline void Matrix::setLinearHardening(
         const xt::xtensor<double,1>& tauy0,
         const xt::xtensor<double,1>& H)
 {
-  GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::amax(idx)[0] == K.size()-1);
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::amax(idx)[0] == K.size() - 1);
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == G.size());
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == tauy0.size());
   GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == H.size());
@@ -366,7 +351,6 @@ inline void Matrix::setLinearHardening(
 
   this->checkAllSet();
 }
-
 
 inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<double,4>& a_Sig)
 {
@@ -394,7 +378,6 @@ inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<doubl
         }
     }
 }
-
 
 inline void Matrix::tangent(
         const xt::xtensor<double,4>& a_Eps,
@@ -432,7 +415,6 @@ inline void Matrix::tangent(
     }
 }
 
-
 inline void Matrix::epsp(xt::xtensor<double,2>& epsp) const
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
@@ -455,7 +437,6 @@ inline void Matrix::epsp(xt::xtensor<double,2>& epsp) const
     }
 }
 
-
 inline void Matrix::increment()
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
@@ -475,7 +456,6 @@ inline void Matrix::increment()
     }
 }
 
-
 inline xt::xtensor<double,4> Matrix::Stress(const xt::xtensor<double,4>& Eps)
 {
     xt::xtensor<double,4> Sig = xt::empty<double>(Eps.shape());
@@ -483,16 +463,14 @@ inline xt::xtensor<double,4> Matrix::Stress(const xt::xtensor<double,4>& Eps)
     return Sig;
 }
 
-
-inline std::tuple<xt::xtensor<double,4>, xt::xtensor<double,6>> Matrix::Tangent(
-        const xt::xtensor<double,4>& Eps)
+inline std::tuple<xt::xtensor<double,4>, xt::xtensor<double,6>>
+Matrix::Tangent(const xt::xtensor<double,4>& Eps)
 {
     xt::xtensor<double,4> Sig = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
     xt::xtensor<double,6> C = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim});
     this->tangent(Eps, Sig, C);
     return std::make_tuple(Sig, C);
 }
-
 
 inline xt::xtensor<double,2> Matrix::Epsp() const
 {

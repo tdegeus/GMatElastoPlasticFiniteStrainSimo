@@ -34,8 +34,7 @@
         GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT_IMPL(expr, __FILE__, __LINE__)
 
     #define GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT_IMPL(expr, file, line) \
-        if (!(expr)) \
-        { \
+        if (!(expr)) { \
             throw std::runtime_error( \
                 std::string(file) + ':' + std::to_string(line) + \
                 ": assertion failed (" #expr ") \n\t"); \
@@ -46,7 +45,6 @@
     #define GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(expr)
 
 #endif
-
 
 #define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_MAJOR 0
 #define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_MINOR 1
@@ -61,6 +59,5 @@
     (GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_MAJOR == x && \
      GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_MINOR == y && \
      GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_PATCH == z)
-
 
 #endif

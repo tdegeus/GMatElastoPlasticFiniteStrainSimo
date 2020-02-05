@@ -12,23 +12,19 @@
 namespace GMatElastoPlasticFiniteStrainSimo {
 namespace Cartesian3d {
 
-
 inline Elastic::Elastic(double K, double G) : m_K(K), m_G(G)
 {
 }
-
 
 inline double Elastic::K() const
 {
     return m_K;
 }
 
-
 inline double Elastic::G() const
 {
     return m_G;
 }
-
 
 template <class T>
 inline void Elastic::stress(const Tensor2& F, T&& Sig) const
@@ -59,14 +55,12 @@ inline void Elastic::stress(const Tensor2& F, T&& Sig) const
     inv_eig(vec, Tau_val / J, Sig);
 }
 
-
 inline Tensor2 Elastic::Stress(const Tensor2& F) const
 {
     Tensor2 Sig;
     this->stress(F, Sig);
     return Sig;
 }
-
 
 template <class T, class S>
 inline void Elastic::tangent(const Tensor2& F, T&& Sig, S&& C) const
@@ -127,7 +121,8 @@ inline void Elastic::tangent(const Tensor2& F, T&& Sig, S&& C) const
                 for (size_t j = 0; j < 3; ++j) {
                     for (size_t k = 0; k < 3; ++k) {
                         for (size_t l = 0; l < 3; ++l) {
-                            dlnBe_dBe(i,j,k,l) += gc * vec(i,m) * vec(j,n) * vec(k,m) * vec(l,n);
+                            dlnBe_dBe(i, j, k, l) +=
+                                gc * vec(i, m) * vec(j, n) * vec(k, m) * vec(l, n);
                         }
                     }
                 }
@@ -152,7 +147,6 @@ inline void Elastic::tangent(const Tensor2& F, T&& Sig, S&& C) const
     // combine tangents:
     xt::noalias(C) = (Kgeo + Kmat) / J;
 }
-
 
 inline std::tuple<Tensor2, Tensor4> Elastic::Tangent(const Tensor2& F) const
 {
