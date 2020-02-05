@@ -78,6 +78,7 @@ install:
     - conda install -c conda-forge numpy
     - conda install -c conda-forge pyxtensor
     - conda install -c conda-forge catch2
+    - conda install -c conda-forge scipy
     - if [[ "$XSIMD" == "ON" ]]; then
         conda install -c conda-forge xsimd;
       fi
@@ -91,3 +92,4 @@ script:
     # Run tests
     - ./test/main
     - python ./test/Cartesian3d.py
+    - python ./test/full_python.py

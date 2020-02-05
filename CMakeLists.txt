@@ -1,24 +1,22 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-# Options
-# =======
+# Basic settings
+# ==============
 
 project(GMatElastoPlasticFiniteStrainSimo)
 
 option(BUILD_TESTS "${PROJECT_NAME} Build tests" OFF)
 
-# Internals
-# =========
-
-set(GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 # Version
 # =======
 
 file(
-    STRINGS "${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/config.h" GMatElastoPlasticFiniteStrainSimo_version_defines
-    REGEX "#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_(MAJOR|MINOR|PATCH)")
+    STRINGS
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/GMatElastoPlasticFiniteStrainSimo/config.h"
+        GMatElastoPlasticFiniteStrainSimo_version_defines
+    REGEX
+        "#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_(MAJOR|MINOR|PATCH)")
 
 foreach(ver ${GMatElastoPlasticFiniteStrainSimo_version_defines})
     if(ver MATCHES "#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_(MAJOR|MINOR|PATCH) +([^ ]+)$")
@@ -31,24 +29,18 @@ set(GMATELASTOPLASTICFINITESTRAINSIMO_VERSION
 
 message(STATUS "Building GMatElastoPlasticFiniteStrainSimo v${GMATELASTOPLASTICFINITESTRAINSIMO_VERSION}")
 
-# Build
-# =====
+# Set target
+# ==========
 
-set(GMATELASTOPLASTICFINITESTRAINSIMO_HEADERS
-    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h
-    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d.hpp
-    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d_Elastic.hpp
-    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d_LinearHardening.hpp
-    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d_Matrix.hpp
-    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/Cartesian3d_eigvals.hpp
-    ${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}/GMatElastoPlasticFiniteStrainSimo/config.h)
+find_package(xtensor REQUIRED)
 
-add_library(${PROJECT_NAME} INTERFACE)
+add_library(GMatElastoPlasticFiniteStrainSimo INTERFACE)
 
-target_include_directories(
-    ${PROJECT_NAME} INTERFACE
-    $<BUILD_INTERFACE:${GMATELASTOPLASTICFINITESTRAINSIMO_INCLUDE_DIR}>
-    $<INSTALL_INTERFACE:include>)
+target_include_directories(GMatElastoPlasticFiniteStrainSimo INTERFACE
+    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+target_link_libraries(GMatElastoPlasticFiniteStrainSimo INTERFACE xtensor)
 
 # Installation
 # ============
@@ -57,59 +49,59 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 install(
-    TARGETS ${PROJECT_NAME}
-    EXPORT ${PROJECT_NAME}-targets)
-
-export(
-    EXPORT ${PROJECT_NAME}-targets
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake")
+    DIRECTORY
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+    DESTINATION
+        include)
 
 install(
-    FILES ${GMATELASTOPLASTICFINITESTRAINSIMO_HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+    TARGETS
+        GMatElastoPlasticFiniteStrainSimo
+    EXPORT
+        GMatElastoPlasticFiniteStrainSimo-targets)
 
-set(GMATELASTOPLASTICFINITESTRAINSIMO_CMAKECONFIG_INSTALL_DIR
-    "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}" CACHE
-    STRING "install path for ${PROJECT_NAME}Config.cmake")
+install(
+    EXPORT
+        GMatElastoPlasticFiniteStrainSimo-targets
+    FILE
+        GMatElastoPlasticFiniteStrainSimoTargets.cmake
+    DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/cmake/GMatElastoPlasticFiniteStrainSimo")
 
-configure_package_config_file(
-    "GMatElastoPlasticFiniteStrainSimoConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-    INSTALL_DESTINATION ${GMATELASTOPLASTICFINITESTRAINSIMO_CMAKECONFIG_INSTALL_DIR})
-
-set(_GMATELASTOPLASTICFINITESTRAINSIMO_CMAKE_SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P})
-
+set(_GMATELASTOPLASTICFINITESTRAINSIMO ${CMAKE_SIZEOF_VOID_P})
 unset(CMAKE_SIZEOF_VOID_P)
 
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-    VERSION ${GMATELASTOPLASTICFINITESTRAINSIMO_VERSION}
-    COMPATIBILITY AnyNewerVersion)
+        "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticFiniteStrainSimoConfigVersion.cmake"
+    VERSION
+        ${GMATELASTOPLASTICFINITESTRAINSIMO_VERSION}
+    COMPATIBILITY
+        AnyNewerVersion)
 
-set(CMAKE_SIZEOF_VOID_P ${_GMATELASTOPLASTICFINITESTRAINSIMO_CMAKE_SIZEOF_VOID_P})
+set(CMAKE_SIZEOF_VOID_P ${_GMATELASTOPLASTICFINITESTRAINSIMO})
 
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-    DESTINATION ${GMATELASTOPLASTICFINITESTRAINSIMO_CMAKECONFIG_INSTALL_DIR})
-
-install(
-    EXPORT ${PROJECT_NAME}-targets
-    FILE "${PROJECT_NAME}Targets.cmake"
-    DESTINATION ${GMATELASTOPLASTICFINITESTRAINSIMO_CMAKECONFIG_INSTALL_DIR})
+        "${CMAKE_CURRENT_SOURCE_DIR}/GMatElastoPlasticFiniteStrainSimoConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticFiniteStrainSimoConfigVersion.cmake"
+    DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/cmake/GMatElastoPlasticFiniteStrainSimo")
 
 configure_file(
-    "GMatElastoPlasticFiniteStrainSimo.pc.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/GMatElastoPlasticFiniteStrainSimo.pc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticFiniteStrainSimo.pc"
      @ONLY)
 
 install(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticFiniteStrainSimo.pc"
+    DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 
 # Add builds
 # ==========
+
+include("GMatElastoPlasticFiniteStrainSimoConfig.cmake")
 
 if(BUILD_TESTS)
     add_subdirectory(test)
