@@ -45,10 +45,7 @@ if(NOT TARGET GMatElastoPlasticFiniteStrainSimo::compiler_warnings)
         set_property(
             TARGET GMatElastoPlasticFiniteStrainSimo::compiler_warnings
             PROPERTY INTERFACE_COMPILE_OPTIONS
-            -Wall
-            -Wextra
-            -pedantic
-            -Wno-unknown-pragmas)
+            -Wall -Wextra -pedantic -Wno-unknown-pragmas)
     endif()
 endif()
 
@@ -69,6 +66,5 @@ if(NOT TARGET GMatElastoPlasticFiniteStrainSimo::debug)
     set_property(
         TARGET GMatElastoPlasticFiniteStrainSimo::debug
         PROPERTY INTERFACE_COMPILE_DEFINITIONS
-        XTENSOR_ENABLE_ASSERT
-        GMATELASTOPLASTICQPOT_ENABLE_ASSERT)
+        XTENSOR_ENABLE_ASSERT GMATELASTOPLASTICQPOT_ENABLE_ASSERT)
 endif()

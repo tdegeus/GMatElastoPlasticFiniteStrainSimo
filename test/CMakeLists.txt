@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.0)
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -17,14 +16,14 @@ find_package(xtensor REQUIRED)
 add_executable(main main.cpp Cartesian3d.cpp)
 target_link_libraries(main PRIVATE Catch2::Catch2 GMatElastoPlasticFiniteStrainSimo)
 
-if (WARNINGS)
+if(WARNINGS)
     target_link_libraries(main PRIVATE GMatElastoPlasticFiniteStrainSimo::compiler_warnings)
 endif()
 
-if (ASSERT)
+if(ASSERT)
     target_link_libraries(main PRIVATE GMatElastoPlasticFiniteStrainSimo::assert)
 endif()
 
-if (XSIMD)
+if(XSIMD)
     target_link_libraries(main PRIVATE xtensor::optimize xtensor::use_xsimd)
 endif()
