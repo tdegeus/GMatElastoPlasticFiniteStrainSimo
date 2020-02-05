@@ -47,37 +47,25 @@ inline double Epseq(const Tensor2& Eps);
 // List version of the functions above (no allocation)
 
 inline void hydrostatic(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Am);
-
 inline void deviatoric(const xt::xtensor<double,3>& A, xt::xtensor<double,3>& Ad);
-
 inline void strain(const xt::xtensor<double,3>& F, xt::xtensor<double,3>& Eps);
-
 inline void sigeq(const xt::xtensor<double,3>& Sig, xt::xtensor<double,1>& Sigeq);
-
 inline void epseq(const xt::xtensor<double,3>& Eps, xt::xtensor<double,1>& Epseq);
 
 // Auto-allocation allocation of the functions above
 
 inline xt::xtensor<double,1> Hydrostatic(const xt::xtensor<double,3>& A);
-
 inline xt::xtensor<double,3> Deviatoric(const xt::xtensor<double,3>& A);
-
 inline xt::xtensor<double,3> Strain(const xt::xtensor<double,3>& F);
-
 inline xt::xtensor<double,1> Sigeq(const xt::xtensor<double,3>& Sig);
-
 inline xt::xtensor<double,1> Epseq(const xt::xtensor<double,3>& Eps);
 
 // Matrix version of the functions above (no allocation)
 
 inline void hydrostatic(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Am);
-
 inline void deviatoric(const xt::xtensor<double,4>& A, xt::xtensor<double,4>& Ad);
-
 inline void strain(const xt::xtensor<double,4>& F, xt::xtensor<double,4>& Eps);
-
 inline void sigeq(const xt::xtensor<double,4>& Sig, xt::xtensor<double,2>& Sigeq);
-
 inline void epseq(const xt::xtensor<double,4>& Eps, xt::xtensor<double,2>& Epseq);
 
 // Auto-allocation allocation of the functions above
@@ -88,6 +76,7 @@ inline xt::xtensor<double,4> Strain(const xt::xtensor<double,4>& F);
 inline xt::xtensor<double,2> Sigeq(const xt::xtensor<double,4>& Sig);
 inline xt::xtensor<double,2> Epseq(const xt::xtensor<double,4>& Eps);
 
+// Material point
 
 class Elastic
 {
@@ -121,6 +110,7 @@ private:
     double m_G; // shear modulus
 };
 
+// Material point
 
 class alignas(XTENSOR_DEFAULT_ALIGNMENT) LinearHardening
 {
@@ -189,6 +179,7 @@ struct Type {
     };
 };
 
+// Matrix of material points
 
 class Matrix
 {
@@ -279,10 +270,9 @@ public:
 
     // Auto-allocation of the functions above
 
-    xt::xtensor<double,4> Stress(
-        const xt::xtensor<double,4>& F);
+    xt::xtensor<double,4> Stress(const xt::xtensor<double,4>& F);
 
-    std::tuple<xt::xtensor<double,4>, xt::xtensor<double,6>> 
+    std::tuple<xt::xtensor<double,4>, xt::xtensor<double,6>>
     Tangent(const xt::xtensor<double,4>& F);
 
     xt::xtensor<double,2> Epsp() const;

@@ -6,6 +6,7 @@ import numpy as np
 def EQ(a,b):
     assert np.abs(a-b) < 1.e-12
 
+
 def ALLEQ(a, b):
     assert np.allclose(a, b)
 
