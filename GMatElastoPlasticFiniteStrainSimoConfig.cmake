@@ -56,7 +56,7 @@ if(NOT TARGET GMatElastoPlasticFiniteStrainSimo::assert)
     set_property(
         TARGET GMatElastoPlasticFiniteStrainSimo::assert
         PROPERTY INTERFACE_COMPILE_DEFINITIONS
-        GMATELASTOPLASTICQPOT_ENABLE_ASSERT)
+        GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT)
 endif()
 
 # Define support target "GMatElastoPlasticFiniteStrainSimo::debug"
@@ -66,5 +66,5 @@ if(NOT TARGET GMatElastoPlasticFiniteStrainSimo::debug)
     set_property(
         TARGET GMatElastoPlasticFiniteStrainSimo::debug
         PROPERTY INTERFACE_COMPILE_DEFINITIONS
-        XTENSOR_ENABLE_ASSERT GMATELASTOPLASTICQPOT_ENABLE_ASSERT)
+        XTENSOR_ENABLE_ASSERT GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT)
 endif()
