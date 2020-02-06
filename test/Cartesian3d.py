@@ -2,14 +2,11 @@
 import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as GMat
 import numpy as np
 
-
 def EQ(a,b):
     assert np.abs(a-b) < 1.e-12
 
-
 def ALLEQ(a, b):
     assert np.allclose(a, b)
-
 
 K = 12.3
 G = 45.6
@@ -21,9 +18,7 @@ F = np.array([
         [0.0, 1.0 / (1.0 + gamma), 0.0],
         [0.0, 0.0, 1.0]])
 
-
 # Elastic
-
 
 mat = GMat.Elastic(K, G)
 
@@ -39,9 +34,7 @@ EQ(Sig[1,2], 0.0)
 EQ(Sig[2,0], 0.0)
 EQ(Sig[2,1], 0.0)
 
-
 # Matrix
-
 
 nelem = 2
 nip = 2
