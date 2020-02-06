@@ -154,13 +154,13 @@ inline void deviatoric(const xt::xtensor<double,3>& A, xt::xtensor<double,3>& Ad
 
     #pragma omp parallel
     {
-        Tensor2 unit = I2();
+        Tensor2 I = I2();
 
         #pragma omp for
         for (size_t e = 0; e < A.shape(0); ++e) {
             auto Ai = xt::adapt(&A(e, 0, 0), xt::xshape<3, 3>());
             auto Aid = xt::adapt(&Ad(e, 0, 0), xt::xshape<3, 3>());
-            xt::noalias(Aid) = Ai - trace(Ai) / 3.0 * unit;
+            xt::noalias(Aid) = Ai - trace(Ai) / 3.0 * I;
         }
     }
 }
@@ -196,12 +196,12 @@ inline void epseq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
 
     #pragma omp parallel
     {
-        Tensor2 unit = I2();
+        Tensor2 I = I2();
 
         #pragma omp for
         for (size_t e = 0; e < A.shape(0); ++e) {
             auto Ai = xt::adapt(&A(e, 0, 0), xt::xshape<3, 3>());
-            auto Aid = Ai - trace(Ai) / 3.0 * unit;
+            auto Aid = Ai - trace(Ai) / 3.0 * I;
             Aeq(e) = std::sqrt(2.0 / 3.0 * A2_ddot_B2(Aid, Aid));
         }
     }
@@ -214,11 +214,12 @@ inline void sigeq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
 
     #pragma omp parallel
     {
-        Tensor2 unit = I2();
+        Tensor2 I = I2();
+
         #pragma omp for
         for (size_t e = 0; e < A.shape(0); ++e) {
             auto Ai = xt::adapt(&A(e, 0, 0), xt::xshape<3, 3>());
-            auto Aid = Ai - trace(Ai) / 3.0 * unit;
+            auto Aid = Ai - trace(Ai) / 3.0 * I;
             Aeq(e) = std::sqrt(1.5 * A2_ddot_B2(Aid, Aid));
         }
     }
@@ -227,35 +228,35 @@ inline void sigeq(const xt::xtensor<double,3>& A, xt::xtensor<double,1>& Aeq)
 inline xt::xtensor<double,1> Hydrostatic(const xt::xtensor<double,3>& A)
 {
     xt::xtensor<double,1> Am = xt::empty<double>({A.shape(0)});
-    Cartesian3d::hydrostatic(A, Am);
+    hydrostatic(A, Am);
     return Am;
 }
 
 inline xt::xtensor<double,3> Deviatoric(const xt::xtensor<double,3>& A)
 {
     xt::xtensor<double,3> Ad = xt::empty<double>(A.shape());
-    Cartesian3d::deviatoric(A, Ad);
+    deviatoric(A, Ad);
     return Ad;
 }
 
 inline xt::xtensor<double,3> Strain(const xt::xtensor<double,3>& F)
 {
     xt::xtensor<double,3> Eps = xt::empty<double>(F.shape());
-    Cartesian3d::strain(F, Eps);
+    strain(F, Eps);
     return Eps;
 }
 
 inline xt::xtensor<double,1> Epseq(const xt::xtensor<double,3>& A)
 {
     xt::xtensor<double,1> Aeq = xt::empty<double>({A.shape(0)});
-    Cartesian3d::epseq(A, Aeq);
+    epseq(A, Aeq);
     return Aeq;
 }
 
 inline xt::xtensor<double,1> Sigeq(const xt::xtensor<double,3>& A)
 {
     xt::xtensor<double,1> Aeq = xt::empty<double>({A.shape(0)});
-    Cartesian3d::sigeq(A, Aeq);
+    sigeq(A, Aeq);
     return Aeq;
 }
 
@@ -283,14 +284,14 @@ inline void deviatoric(const xt::xtensor<double,4>& A, xt::xtensor<double,4>& Ad
 
     #pragma omp parallel
     {
-        Tensor2 unit = I2();
+        Tensor2 I = I2();
 
         #pragma omp for
         for (size_t e = 0; e < A.shape(0); ++e) {
             for (size_t q = 0; q < A.shape(1); ++q) {
                 auto Ai = xt::adapt(&A(e, q, 0, 0), xt::xshape<3, 3>());
                 auto Aid = xt::adapt(&Ad(e, q, 0, 0), xt::xshape<3, 3>());
-                xt::noalias(Aid) = Ai - trace(Ai) / 3.0 * unit;
+                xt::noalias(Aid) = Ai - trace(Ai) / 3.0 * I;
             }
         }
     }
@@ -329,13 +330,13 @@ inline void epseq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 
     #pragma omp parallel
     {
-        Tensor2 unit = I2();
+        Tensor2 I = I2();
 
         #pragma omp for
         for (size_t e = 0; e < A.shape(0); ++e) {
             for (size_t q = 0; q < A.shape(1); ++q) {
                 auto Ai = xt::adapt(&A(e, q, 0, 0), xt::xshape<3, 3>());
-                auto Aid = Ai - trace(Ai) / 3.0 * unit;
+                auto Aid = Ai - trace(Ai) / 3.0 * I;
                 Aeq(e, q) = std::sqrt(2.0 / 3.0 * A2_ddot_B2(Aid, Aid));
             }
         }
@@ -349,13 +350,13 @@ inline void sigeq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 
     #pragma omp parallel
     {
-        Tensor2 unit = I2();
+        Tensor2 I = I2();
 
         #pragma omp for
         for (size_t e = 0; e < A.shape(0); ++e) {
             for (size_t q = 0; q < A.shape(1); ++q) {
                 auto Ai = xt::adapt(&A(e, q, 0, 0), xt::xshape<3, 3>());
-                auto Aid = Ai - trace(Ai) / 3.0 * unit;
+                auto Aid = Ai - trace(Ai) / 3.0 * I;
                 Aeq(e, q) = std::sqrt(1.5 * A2_ddot_B2(Aid, Aid));
             }
         }
@@ -365,42 +366,42 @@ inline void sigeq(const xt::xtensor<double,4>& A, xt::xtensor<double,2>& Aeq)
 inline xt::xtensor<double,2> Hydrostatic(const xt::xtensor<double,4>& A)
 {
     xt::xtensor<double,2> Am = xt::empty<double>({A.shape(0), A.shape(1)});
-    Cartesian3d::hydrostatic(A, Am);
+    hydrostatic(A, Am);
     return Am;
 }
 
 inline xt::xtensor<double,4> Deviatoric(const xt::xtensor<double,4>& A)
 {
     xt::xtensor<double,4> Ad = xt::empty<double>(A.shape());
-    Cartesian3d::deviatoric(A, Ad);
+    deviatoric(A, Ad);
     return Ad;
 }
 
 inline xt::xtensor<double,4> Strain(const xt::xtensor<double,4>& F)
 {
     xt::xtensor<double,4> Eps = xt::empty<double>(F.shape());
-    Cartesian3d::strain(F, Eps);
+    strain(F, Eps);
     return Eps;
 }
 
 inline xt::xtensor<double,2> Epseq(const xt::xtensor<double,4>& A)
 {
     xt::xtensor<double,2> Aeq = xt::empty<double>({A.shape(0), A.shape(1)});
-    Cartesian3d::epseq(A, Aeq);
+    epseq(A, Aeq);
     return Aeq;
 }
 
 inline xt::xtensor<double,2> Sigeq(const xt::xtensor<double,4>& A)
 {
     xt::xtensor<double,2> Aeq = xt::empty<double>({A.shape(0), A.shape(1)});
-    Cartesian3d::sigeq(A, Aeq);
+    sigeq(A, Aeq);
     return Aeq;
 }
 
 template <class U>
 inline double trace(const U& A)
 {
-    return A(0, 0) + A(1, 1) + A(2, 2);
+    return A(0,0) + A(1,1) + A(2,2);
 }
 
 template <class U, class V, class W>

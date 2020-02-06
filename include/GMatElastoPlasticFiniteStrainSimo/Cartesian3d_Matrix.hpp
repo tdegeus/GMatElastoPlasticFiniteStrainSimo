@@ -50,12 +50,12 @@ inline xt::xtensor<double,2> Matrix::K() const
         for (size_t q = 0; q < m_nip; ++q) {
 
             switch (m_type(e, q)) {
-                case Type::Elastic:
-                    out(e, q) = m_Elastic[m_index(e, q)].K();
-                    break;
-                case Type::LinearHardening:
-                    out(e, q) = m_LinearHardening[m_index(e, q)].K();
-                    break;
+            case Type::Elastic:
+                out(e, q) = m_Elastic[m_index(e, q)].K();
+                break;
+            case Type::LinearHardening:
+                out(e, q) = m_LinearHardening[m_index(e, q)].K();
+                break;
             }
         }
     }
@@ -74,12 +74,12 @@ inline xt::xtensor<double,2> Matrix::G() const
         for (size_t q = 0; q < m_nip; ++q) {
 
             switch (m_type(e, q)) {
-                case Type::Elastic:
-                    out(e, q) = m_Elastic[m_index(e, q)].G();
-                    break;
-                case Type::LinearHardening:
-                    out(e, q) = m_LinearHardening[m_index(e, q)].G();
-                    break;
+            case Type::Elastic:
+                out(e, q) = m_Elastic[m_index(e, q)].G();
+                break;
+            case Type::LinearHardening:
+                out(e, q) = m_LinearHardening[m_index(e, q)].G();
+                break;
             }
         }
     }
@@ -253,8 +253,8 @@ inline void Matrix::checkAllSet()
 }
 
 inline void Matrix::setElastic(
-        const xt::xtensor<size_t,2>& phase, 
-        double K, 
+        const xt::xtensor<size_t,2>& phase,
+        double K,
         double G)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
@@ -368,12 +368,12 @@ inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<doubl
             auto Sig = xt::adapt(&a_Sig(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
 
             switch (m_type(e, q)) {
-                case Type::Elastic:
-                    m_Elastic[m_index(e, q)].stress(Eps, Sig);
-                    break;
-                case Type::LinearHardening:
-                    m_LinearHardening[m_index(e, q)].stress(Eps, Sig);
-                    break;
+            case Type::Elastic:
+                m_Elastic[m_index(e, q)].stress(Eps, Sig);
+                break;
+            case Type::LinearHardening:
+                m_LinearHardening[m_index(e, q)].stress(Eps, Sig);
+                break;
             }
         }
     }
@@ -404,12 +404,12 @@ inline void Matrix::tangent(
                 xt::adapt(&a_C(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
 
             switch (m_type(e, q)) {
-                case Type::Elastic:
-                    m_Elastic[m_index(e, q)].tangent(Eps, Sig, C);
-                    break;
-                case Type::LinearHardening:
-                    m_LinearHardening[m_index(e, q)].tangent(Eps, Sig, C);
-                    break;
+            case Type::Elastic:
+                m_Elastic[m_index(e, q)].tangent(Eps, Sig, C);
+                break;
+            case Type::LinearHardening:
+                m_LinearHardening[m_index(e, q)].tangent(Eps, Sig, C);
+                break;
             }
         }
     }
@@ -426,12 +426,12 @@ inline void Matrix::epsp(xt::xtensor<double,2>& epsp) const
         for (size_t q = 0; q < m_nip; ++q) {
 
             switch (m_type(e, q)) {
-                case Type::Elastic:
-                    epsp(e, q) = 0.0;
-                    break;
-                case Type::LinearHardening:
-                    epsp(e, q) = m_LinearHardening[m_index(e, q)].epsp();
-                    break;
+            case Type::Elastic:
+                epsp(e, q) = 0.0;
+                break;
+            case Type::LinearHardening:
+                epsp(e, q) = m_LinearHardening[m_index(e, q)].epsp();
+                break;
             }
         }
     }
@@ -446,11 +446,11 @@ inline void Matrix::increment()
         for (size_t q = 0; q < m_nip; ++q) {
 
             switch (m_type(e, q)) {
-                case Type::Elastic:
-                    break;
-                case Type::LinearHardening:
-                    m_LinearHardening[m_index(e, q)].increment();
-                    break;
+            case Type::Elastic:
+                break;
+            case Type::LinearHardening:
+                m_LinearHardening[m_index(e, q)].increment();
+                break;
             }
         }
     }
