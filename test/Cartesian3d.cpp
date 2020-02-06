@@ -7,7 +7,6 @@
 
 namespace GM = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
 
-
 TEST_CASE("GMatElastoPlasticFiniteStrainSimo::Cartesian3d", "Cartesian3d.h")
 {
 
@@ -21,7 +20,6 @@ F.fill(0.0);
 F(0,0) = 1.0 + gamma;
 F(1,1) = 1.0 / (1.0 + gamma);
 F(2,2) = 1.0;
-
 
 SECTION("Elastic")
 {
@@ -39,7 +37,6 @@ SECTION("Elastic")
     EQ(Sig(2,0), 0.0);
     EQ(Sig(2,1), 0.0);
 }
-
 
 SECTION("Matrix")
 {
@@ -76,6 +73,5 @@ SECTION("Matrix")
     REQUIRE(xt::allclose(xt::view(sig, xt::all(), xt::all(), 2, xt::all()), 0.0));
     REQUIRE(xt::allclose(xt::view(sig, xt::all(), xt::all(), xt::all(), 2), 0.0));
 }
-
 
 }
