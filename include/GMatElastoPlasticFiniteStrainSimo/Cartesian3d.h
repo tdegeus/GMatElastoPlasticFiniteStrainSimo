@@ -27,7 +27,7 @@ inline Tensor4 I4rt();
 inline Tensor4 I4s();
 inline Tensor4 I4d();
 
-// Hydrostatic stress/strain
+// Hydrostatic part of a tensor
 
 inline double Hydrostatic(const Tensor2& A);
 
