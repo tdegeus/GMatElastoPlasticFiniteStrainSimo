@@ -369,9 +369,9 @@ inline void Matrix::stress(const xt::xtensor<double,4>& a_Eps, xt::xtensor<doubl
 }
 
 inline void Matrix::tangent(
-        const xt::xtensor<double,4>& a_Eps,
-              xt::xtensor<double,4>& a_Sig,
-              xt::xtensor<double,6>& a_C)
+    const xt::xtensor<double,4>& a_Eps,
+          xt::xtensor<double,4>& a_Sig,
+          xt::xtensor<double,6>& a_C)
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
