@@ -110,9 +110,9 @@ py::class_<SM::Elastic>(sm, "Elastic")
 
     .def(py::init<double, double>(), "Elastic material point", py::arg("K"), py::arg("G"))
 
-    .def("K", &SM::Elastic::K, "Returns the bulk modulus")
+    .def("K", &SM::Elastic::K, "Returns the bulk modulus.")
 
-    .def("G", &SM::Elastic::G, "Returns the shear modulus")
+    .def("G", &SM::Elastic::G, "Returns the shear modulus.")
 
     .def("Stress",
         &SM::Elastic::Stress,
@@ -140,13 +140,13 @@ py::class_<SM::LinearHardening>(sm, "LinearHardening")
         py::arg("epsy0"),
         py::arg("H"))
 
-    .def("K", &SM::LinearHardening::K, "Returns the bulk modulus")
+    .def("K", &SM::LinearHardening::K, "Returns the bulk modulus.")
 
-    .def("G", &SM::LinearHardening::G, "Returns the shear modulus")
+    .def("G", &SM::LinearHardening::G, "Returns the shear modulus.")
 
-    .def("tauy0", &SM::LinearHardening::tauy0, "Returns the initial yield stress")
+    .def("tauy0", &SM::LinearHardening::tauy0, "Returns the initial yield stress.")
 
-    .def("H", &SM::LinearHardening::H, "Returns the hardening modulus")
+    .def("H", &SM::LinearHardening::H, "Returns the hardening modulus.")
 
     .def("Stress",
         &SM::LinearHardening::Stress,
