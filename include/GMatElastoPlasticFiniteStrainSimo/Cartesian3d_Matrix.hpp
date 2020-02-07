@@ -252,39 +252,30 @@ inline void Matrix::checkAllSet()
     }
 }
 
-inline void Matrix::setElastic(
-        const xt::xtensor<size_t,2>& phase,
-        double K,
-        double G)
+inline void Matrix::setElastic(const xt::xtensor<size_t,2>& I, double K, double G)
 {
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == I.shape());
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(I, 0ul) || xt::equal(I, 1ul)));
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        xt::all(xt::equal(phase, 0ul) || xt::equal(phase, 1ul)));
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        xt::all(xt::equal(xt::where(xt::equal(phase, 1ul), m_type, Type::Unset), Type::Unset)));
+        xt::all(xt::equal(xt::where(xt::equal(I, 1ul), m_type, Type::Unset), Type::Unset)));
 
-    m_type = xt::where(xt::equal(phase, 1ul), Type::Elastic, m_type);
-    m_index = xt::where(xt::equal(phase, 1ul), m_Elastic.size(), m_index);
+    m_type = xt::where(xt::equal(I, 1ul), Type::Elastic, m_type);
+    m_index = xt::where(xt::equal(I, 1ul), m_Elastic.size(), m_index);
     this->checkAllSet();
     m_Elastic.push_back(Elastic(K, G));
 }
 
 inline void Matrix::setLinearHardening(
-        const xt::xtensor<size_t,2>& phase,
-        double K,
-        double G,
-        double tauy0,
-        double H)
+    const xt::xtensor<size_t,2>& I, double K, double G, double tauy0, double H)
 {
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == I.shape());
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(I, 0ul) || xt::equal(I, 1ul)));
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        xt::all(xt::equal(phase, 0ul) || xt::equal(phase, 1ul)));
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        xt::all(xt::equal(xt::where(xt::equal(phase, 1ul), m_type, Type::Unset), Type::Unset)));
+        xt::all(xt::equal(xt::where(xt::equal(I, 1ul), m_type, Type::Unset), Type::Unset)));
 
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t q = 0; q < m_nip; ++q) {
-            if (phase(e, q) == 1ul) {
+            if (I(e, q) == 1ul) {
                 m_type(e, q) = Type::LinearHardening;
                 m_index(e, q) = m_LinearHardening.size();
                 m_LinearHardening.push_back(LinearHardening(K, G, tauy0, H));
@@ -296,7 +287,7 @@ inline void Matrix::setLinearHardening(
 }
 
 inline void Matrix::setElastic(
-        const xt::xtensor<size_t,2>& phase,
+        const xt::xtensor<size_t,2>& I,
         const xt::xtensor<size_t,2>& idx,
         const xt::xtensor<double,1>& K,
         const xt::xtensor<double,1>& G)
@@ -304,14 +295,13 @@ inline void Matrix::setElastic(
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::amax(idx)[0] == K.size() - 1);
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == G.size());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == idx.shape());
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == I.shape());
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(I, 0ul) || xt::equal(I, 1ul)));
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        xt::all(xt::equal(phase, 0ul) || xt::equal(phase, 1ul)));
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        xt::all(xt::equal(xt::where(xt::equal(phase, 1ul), m_type, Type::Unset), Type::Unset)));
+        xt::all(xt::equal(xt::where(xt::equal(I, 1ul), m_type, Type::Unset), Type::Unset)));
 
-    m_type = xt::where(xt::equal(phase, 1ul), Type::Elastic, m_type);
-    m_index = xt::where(xt::equal(phase, 1ul), m_Elastic.size() + idx, m_index);
+    m_type = xt::where(xt::equal(I, 1ul), Type::Elastic, m_type);
+    m_index = xt::where(xt::equal(I, 1ul), m_Elastic.size() + idx, m_index);
     this->checkAllSet();
 
     for (size_t i = 0; i < K.size(); ++i) {
@@ -320,7 +310,7 @@ inline void Matrix::setElastic(
 }
 
 inline void Matrix::setLinearHardening(
-        const xt::xtensor<size_t,2>& phase,
+        const xt::xtensor<size_t,2>& I,
         const xt::xtensor<size_t,2>& idx,
         const xt::xtensor<double,1>& K,
         const xt::xtensor<double,1>& G,
@@ -332,15 +322,14 @@ inline void Matrix::setLinearHardening(
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == tauy0.size());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(K.size() == H.size());
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == idx.shape());
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == phase.shape());
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_type.shape() == I.shape());
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::all(xt::equal(I, 0ul) || xt::equal(I, 1ul)));
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        xt::all(xt::equal(phase, 0ul) || xt::equal(phase, 1ul)));
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(
-        xt::all(xt::equal(xt::where(xt::equal(phase, 1ul), m_type, Type::Unset), Type::Unset)));
+        xt::all(xt::equal(xt::where(xt::equal(I, 1ul), m_type, Type::Unset), Type::Unset)));
 
   for (size_t e = 0; e < m_nelem; ++e) {
       for (size_t q = 0; q < m_nip; ++q) {
-            if (phase(e, q) == 1ul) {
+            if (I(e, q) == 1ul) {
                 m_type(e, q) = Type::LinearHardening;
                 m_index(e, q) = m_LinearHardening.size();
                 m_LinearHardening.push_back(
