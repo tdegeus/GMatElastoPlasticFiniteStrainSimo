@@ -6,14 +6,14 @@
 #
 # In addition, it sets the following variables:
 #
-#     GMatElastoPlasticQPot_FOUND - true if GMatElastoPlasticFiniteStrainSimo found
-#     GMatElastoPlasticQPot_VERSION - GMatElastoPlasticFiniteStrainSimo's version
-#     GMatElastoPlasticQPot_INCLUDE_DIRS - the directory containing GMatElastoPlasticFiniteStrainSimo headers
+#     GMatElastoPlasticQPot_FOUND - true if the library is found
+#     GMatElastoPlasticQPot_VERSION - the library's version
+#     GMatElastoPlasticQPot_INCLUDE_DIRS - directory containing the library's headers
 #
 # The following support targets are defined to simplify things:
 #
 #     GMatElastoPlasticFiniteStrainSimo::compiler_warnings - enable compiler warnings
-#     GMatElastoPlasticFiniteStrainSimo::assert - enable GMatElastoPlasticFiniteStrainSimo assertions
+#     GMatElastoPlasticFiniteStrainSimo::assert - enable library assertions
 #     GMatElastoPlasticFiniteStrainSimo::debug - enable all assertions (slow)
 
 include(CMakeFindDependencyMacro)
@@ -22,11 +22,14 @@ include(CMakeFindDependencyMacro)
 
 if(NOT TARGET GMatElastoPlasticFiniteStrainSimo)
     include("${CMAKE_CURRENT_LIST_DIR}/GMatElastoPlasticQPotTargets.cmake")
-    get_target_property(
-        GMatElastoPlasticQPot_INCLUDE_DIRS
-        GMatElastoPlasticFiniteStrainSimo
-        INTERFACE_INCLUDE_DIRECTORIES)
 endif()
+
+# Define "GMatElastoPlasticQPot_INCLUDE_DIRS"
+
+get_target_property(
+    GMatElastoPlasticQPot_INCLUDE_DIRS
+    GMatElastoPlasticFiniteStrainSimo
+    INTERFACE_INCLUDE_DIRECTORIES)
 
 # Find dependencies
 

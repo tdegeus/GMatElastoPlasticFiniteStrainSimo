@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.0)
 
 # Basic settings
@@ -11,22 +12,21 @@ option(BUILD_TESTS "${PROJECT_NAME} Build tests" OFF)
 # =======
 
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/GMatElastoPlasticFiniteStrainSimo/config.h"
-             GMatElastoPlasticFiniteStrainSimo_version_defines
+             _GMAT_version_defines
      REGEX "#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_(MAJOR|MINOR|PATCH)")
 
-foreach(ver ${GMatElastoPlasticFiniteStrainSimo_version_defines})
+foreach(ver ${_GMAT_version_defines})
     if(ver MATCHES
        "#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_(MAJOR|MINOR|PATCH) +([^ ]+)$")
-        set(GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_${CMAKE_MATCH_1}
+        set(_GMAT_VERSION_${CMAKE_MATCH_1}
             "${CMAKE_MATCH_2}"
             CACHE INTERNAL "")
     endif()
 endforeach()
 
-set(GMATELASTOPLASTICFINITESTRAINSIMO_VERSION
-    ${GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_MAJOR}.${GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_MINOR}.${GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_PATCH})
+set(_GMAT_VERSION ${_GMAT_VERSION_MAJOR}.${_GMAT_VERSION_MINOR}.${_GMAT_VERSION_PATCH})
 
-message(STATUS "Building GMatElastoPlasticFiniteStrainSimo v${GMATELASTOPLASTICFINITESTRAINSIMO_VERSION}")
+message(STATUS "Building GMatElastoPlasticFiniteStrainSimo v${_GMAT_VERSION}")
 
 # Set target
 # ==========
@@ -56,14 +56,15 @@ install(
     FILE GMatElastoPlasticFiniteStrainSimoTargets.cmake
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/GMatElastoPlasticFiniteStrainSimo")
 
-set(_GMATELASTOPLASTICFINITESTRAINSIMO ${CMAKE_SIZEOF_VOID_P})
+set(_GMAT ${CMAKE_SIZEOF_VOID_P})
 unset(CMAKE_SIZEOF_VOID_P)
 
-write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticFiniteStrainSimoConfigVersion.cmake"
-    VERSION ${GMATELASTOPLASTICFINITESTRAINSIMO_VERSION}
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticFiniteStrainSimoConfigVersion.cmake"
+    VERSION ${_GMAT_VERSION}
     COMPATIBILITY AnyNewerVersion)
 
-set(CMAKE_SIZEOF_VOID_P ${_GMATELASTOPLASTICFINITESTRAINSIMO})
+set(CMAKE_SIZEOF_VOID_P ${_GMAT})
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/GMatElastoPlasticFiniteStrainSimoConfig.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticFiniteStrainSimoConfigVersion.cmake"
