@@ -14,7 +14,7 @@
 % ==============================================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{goose-article}[2019/12/20 v0.4.0 customized article class]
+\ProvidesClass{goose-article}[2019/12/20 v0.5.0 customized article class]
 
 % ==============================================================================
 % Options

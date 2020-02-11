@@ -1,14 +1,12 @@
-\documentclass{goose-article}
+\documentclass[namecite, fleqn]{goose-article}
 
 \usepackage{framed}
 
-\hypersetup{pdfauthor={T.W.J. de Geus}}
-
 \title{Simo elasto-plastic model for finite strains}
 
-\author{Tom~W.J.\ de Geus}
+\author{Tom W.J.\ de Geus}
 
-\contact{tom@geus.me, www.geus.me}
+\hypersetup{pdfauthor={T.W.J. de Geus}}
 
 \newcommand\leftstar[1]{\hspace*{-.3em}~^\star\!#1}
 \newcommand\ST[1]{\hspace*{-.3em}~^\star\!#1}
@@ -64,8 +62,10 @@ $\T{F}_\mathrm{e}$, and a plastic part, $\T{F}_\mathrm{p}$, as follows:
 \begin{equation}
     \T{F} \equiv \T{F}_\mathrm{e} \cdot \T{F}_\mathrm{p}
 \end{equation}
-The model is fully defined in the deformed configuration. To that end it is defined in terms of
-the logarithmic strain. The Kirchhoff stress $\T{\tau}$ is thereby related to the
+The model is fully defined in the deformed configuration.
+To that end it is defined in terms of
+the logarithmic strain.
+The Kirchhoff stress $\T{\tau}$ is thereby related to the
 logarithmic elastic strain $\T{\varepsilon}_\mathrm{e} \equiv \tfrac{1}{2} \ln \T{b}_\mathrm{e}$
 in the usual way:
 \begin{equation}

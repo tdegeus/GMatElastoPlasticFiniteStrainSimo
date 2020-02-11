@@ -227,11 +227,27 @@ inline xt::xtensor<double,6> Matrix::I4d() const
     return out;
 }
 
+inline xt::xtensor<size_t,2> Matrix::isElastic() const
+{
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
+
+    xt::xtensor<size_t,2> out = xt::where(xt::equal(m_type, Type::Elastic), 1ul, 0ul);
+    return out;
+}
+
 inline xt::xtensor<size_t,2> Matrix::isPlastic() const
 {
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
 
     xt::xtensor<size_t,2> out = xt::where(xt::not_equal(m_type, Type::Elastic), 1ul, 0ul);
+    return out;
+}
+
+inline xt::xtensor<size_t,2> Matrix::isLinearHardening() const
+{
+    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(m_allSet);
+
+    xt::xtensor<size_t,2> out = xt::where(xt::equal(m_type, Type::LinearHardening), 1ul, 0ul);
     return out;
 }
 
