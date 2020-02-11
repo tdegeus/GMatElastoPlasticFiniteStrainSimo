@@ -24,7 +24,6 @@ F(2,2) = 1.0;
 SECTION("Elastic")
 {
     GM::Elastic mat(K, G);
-
     auto Sig = mat.Stress(F);
 
     EQ(Sig(0,0), G * +2.0 * std::log(1.0 + gamma));
@@ -45,7 +44,6 @@ SECTION("Matrix")
 
     GM::Matrix mat(nelem, nip);
 
-    // all rows elastic
     {
         xt::xtensor<size_t,2> I = xt::ones<size_t>({nelem, nip});
         mat.setElastic(I, K, G);

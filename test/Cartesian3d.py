@@ -21,7 +21,6 @@ F = np.array([
 # Elastic
 
 mat = GMat.Elastic(K, G)
-
 Sig = mat.Stress(F)
 
 EQ(Sig[0,0], G * +2.0 * np.log(1.0 + gamma))
@@ -41,7 +40,6 @@ nip = 2
 
 mat = GMat.Matrix(nelem, nip)
 
-# all rows: elastic
 I = np.ones([nelem, nip], dtype='int')
 mat.setElastic(I, K, G)
 
@@ -61,6 +59,5 @@ ALLEQ(Sig[:,:,0,1], 0.0)
 ALLEQ(Sig[:,:,1,0], 0.0)
 ALLEQ(Sig[:,:,:,2], 0.0)
 ALLEQ(Sig[:,:,2,:], 0.0)
-
 
 print('All checks passed')
