@@ -104,6 +104,21 @@ sm.def("Sigeq",
     "Equivalent stress deviator. Returns matrix of scalars.",
     py::arg("Sig"));
 
+sm.def("Strain",
+    py::overload_cast<const SM::Tensor2&>(&SM::Strain),
+    "Compute logarithmic strain. Returns tensor.",
+    py::arg("F"));
+
+sm.def("Strain",
+    py::overload_cast<const xt::xtensor<double,3>&>(&SM::Strain),
+    "Compute logarithmic strain. Returns list of tensors.",
+    py::arg("F"));
+
+sm.def("Strain",
+    py::overload_cast<const xt::xtensor<double,4>&>(&SM::Strain),
+    "Compute logarithmic strain. Returns matrix of tensors.",
+    py::arg("F"));
+
 // Material point: Elastic
 
 py::class_<SM::Elastic>(sm, "Elastic")
