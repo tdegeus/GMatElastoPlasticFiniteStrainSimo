@@ -34,22 +34,14 @@ get_target_property(
 # Find dependencies
 
 find_dependency(xtensor)
+find_dependency(GMatTensor)
 
 # Define support target "GMatElastoPlasticFiniteStrainSimo::compiler_warnings"
 
 if(NOT TARGET GMatElastoPlasticFiniteStrainSimo::compiler_warnings)
     add_library(GMatElastoPlasticFiniteStrainSimo::compiler_warnings INTERFACE IMPORTED)
-    if(MSVC)
-        set_property(
-            TARGET GMatElastoPlasticFiniteStrainSimo::compiler_warnings
-            PROPERTY INTERFACE_COMPILE_OPTIONS
-            /W4)
-    else()
-        set_property(
-            TARGET GMatElastoPlasticFiniteStrainSimo::compiler_warnings
-            PROPERTY INTERFACE_COMPILE_OPTIONS
-            -Wall -Wextra -pedantic -Wno-unknown-pragmas)
-    endif()
+    target_link_libraries(GMatElastoPlasticFiniteStrainSimo::compiler_warnings INTERFACE
+        GMatTensor::compiler_warnings)
 endif()
 
 # Define support target "GMatElastoPlasticFiniteStrainSimo::assert"
@@ -69,5 +61,6 @@ if(NOT TARGET GMatElastoPlasticFiniteStrainSimo::debug)
     set_property(
         TARGET GMatElastoPlasticFiniteStrainSimo::debug
         PROPERTY INTERFACE_COMPILE_DEFINITIONS
-        XTENSOR_ENABLE_ASSERT GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT)
+        XTENSOR_ENABLE_ASSERT
+        GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT)
 endif()
