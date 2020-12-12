@@ -1,6 +1,6 @@
 # GMatElastoPlasticFiniteStrainSimo
 
-[![Travis](https://travis-ci.com/tdegeus/GMatElastoPlasticFiniteStrainSimo.svg?branch=master)](https://travis-ci.com/tdegeus/GMatElastoPlasticFiniteStrainSimo)
+[![CI](https://github.com/tdegeus/GMatElastoPlasticFiniteStrainSimo/workflows/CI/badge.svg)](https://github.com/tdegeus/GMatElastoPlasticFiniteStrainSimo/actions)
 
 Simo elasto-plastic model.
 An overview of the theory can be found in `docs/readme.tex` 
@@ -15,9 +15,9 @@ conveniently compiled to this [PDF](docs/readme.pdf).
     - [C++ and Python](#c-and-python)
     - [Cartesian3d](#cartesian3d)
         - [Overview](#overview)
+        - [Example](#example)
         - [Function names](#function-names)
         - [Storage](#storage)
-        - [Example](#example)
     - [Debugging](#debugging)
 - [Installation](#installation)
     - [C++ headers](#c-headers)
@@ -34,6 +34,10 @@ conveniently compiled to this [PDF](docs/readme.pdf).
     - [By hand](#by-hand)
     - [Using pkg-config](#using-pkg-config)
 - [References / Credits](#references--credits)
+- [Upgrading instructions](#upgrading-instructions)
+    - [Upgrading to >v0.2.*](#upgrading-to-v02)
+- [Change-log](#change-log)
+    - [v0.2.0](#v020)
 
 <!-- /MarkdownTOC -->
 
@@ -82,41 +86,8 @@ At the material point level different models are implemented with different clas
     the elastic part of the elasto-plastic material model.
 +   `LinearHardening`: the elasto-plastic material model with linear hardening.
 
-There is a `Matrix` class that allows you to combine all these material models and
-have a single API for a matrix of material points. 
-
-### Function names
-
-+   Functions whose name starts with a capital letter (e.g. `Stress`) 
-    return their result (allocating it internally).
-+   Functions whose name starts with a small letter (e.g. `stress`) 
-    write to the, fully allocated, last input argument(s) 
-    (avoiding re-allocation, but making the user responsible to do it properly).
-
-### Storage
-
-+   Scalar
-    ```cpp
-    double
-    ```
-
-+   2nd-order tensor
-    ```cpp
-    xt::xtensor_fixed<double, xt::xshape<3, 3>> = 
-    GMatElastoPlasticFiniteStrainSimo::Cartesian3d::Tensor2 
-    ```
-
-+   List *(i)* of second order tensors *(x,y)* : *A(i,x,y)*
-    ```cpp
-    xt::xtensor<double,3>
-    ```
-    Note that the shape is `[I, 3, 3]`.
-
-+   Matrix *(i,j)* of second order tensors *(x,y)* : *A(i,j,x,y)*
-    ```cpp
-    xt::xtensor<double,4>
-    ```
-    Note that the shape is `[I, J, 3, 3]`.
+There is an `Array` class that allows you to combine all these material models and 
+have a single API for an array of material points. 
 
 ### Example
 
@@ -137,14 +108,19 @@ int main()
     ...
     
     // set deformation gradient tensor (follows e.g. from FEM discretisation)
-    GMat::Tensor2 F;
+    xt::xtensor<double, 2> F;
+    ...
+    elastic.setDefGrad(F);
+    plastic.setDefGrad(F);
     
     // compute stress (including allocation of the result)
     // (N.B. returns the Cauchy stress)
-    GMat::Tensor2 Sig = elastic.Stress(F);
+    auto Sig = elastic.Stress();
+    auto Sig = plastic.Stress();
     // OR compute stress without (re)allocating the results
     // in this case "Sig" has to be of the correct type and shape
-    elastic.stress(F, Sig); 
+    elastic.stress(Sig); 
+    plastic.stress(Sig); 
     ...
 
     return 0;
@@ -160,31 +136,71 @@ namespace GMat = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
 
 int main()
 {
-    // a matrix, of shape [nelem, nip], of material points
-    GMat::Elastic matrix(nelem, nip);
+    size_t ndim = 3;
+
+    // an array, of shape [nelem, nip], of material points
+    GMat::Array<2> array({nelem, nip});
 
     // set materials:
     // points where I(x,y) == 1 are assigned, points where I(x,y) == 0 are skipped
     // all points can only be assigned once
-    matrix.setElastic(I, K, G);
-    matrix.setLinearHardening(I, K, G, tauy0, H);
+    array.setElastic(I, K, G);
+    array.setLinearHardening(I, K, G, tauy0, H);
     ...
 
     // set deformation gradient tensor (follows e.g. from FEM discretisation)
-    xt::xtensor<double,4> F = xt::empty<double>({nelem, nip, 3ul, 3ul});
+    xt::xtensor<double,4> F = xt::empty<double>({nelem, nip, ndim, ndim});
     ... 
+    array.setDefGrad(F);
 
     // compute stress (allocate result)
     // (N.B. returns the Cauchy stress)
-    xt::xtensor<double,4> sig = matrix.Stress(F);
+    xt::xtensor<double,4> sig = array.Stress();
     // OR compute stress without (re)allocating the results
     // in this case "sig" has to be of the correct type and shape
-    matrix.stress(F, sig); 
+    array.stress(sig); 
     ...
 
     return 0;
 }
 ```
+
+### Function names
+
++   Functions whose name starts with a capital letter (e.g. `Stress`) 
+    return their result (allocating it internally).
++   Functions whose name starts with a small letter (e.g. `stress`) 
+    write to the, fully allocated, last input argument(s) 
+    (avoiding re-allocation, but making the user responsible to do it properly).
+
+### Storage
+
++   Scalar
+    ```cpp
+    double
+    ```
+    or
+    ```cpp
+    xt::xtensor<double, 0>
+    ```
+
++   Tensors
+    ```cpp
+    xt:xtensor<double, 2> // 2nd-order tensor
+    xt:xtensor<double, 4> // 4th-order tensor
+    ```
+
++   List *(i)* of second order tensors *(x,y)* : *A(i,x,y)*
+    ```cpp
+    xt::xtensor<double,3>
+    ```
+    Note that the shape is `[I, 3, 3]`.
+
++   Matrix *(i,j)* of second order tensors *(x,y)* : *A(i,j,x,y)*
+    ```cpp
+    xt::xtensor<double,4>
+    ```
+    Note that the shape is `[I, J, 3, 3]`.
 
 ## Debugging
 
@@ -357,3 +373,64 @@ enabling *xsimd*, ...
     Int. J. Mod. Phys. C. 19:523-548, 
     arXiv: [physics/0610206](https://arxiv.org/abs/physics/0610206)*.
 
+# Upgrading instructions
+
+## Upgrading to >v0.2.*
+
+`xtensor_fixed` was completely deprecated in v0.2.0, as were the type aliases 
+`Tensor2` and `Tensor4`. 
+Please update your code as follows:
+
+*   `Tensor2` -> `xt::xtensor<double, 2>`.
+*   `Tensor4` -> `xt::xtensor<double, 4>`.
+
+**Tip:** Used `auto` as return type as much as possible.
+This simplifies implementation, and renders is less subjective to library 
+return type changes.
+
+Compared to v0.1.0, v0.2.0 has some generalisations and efficiency updates. 
+This requires the following changes:
+
+*   `Matrix` has been generalised to `Array<rank>`. Practically this requires changing:
+    -   `Matrix` to `Array<2>` in C++.
+    -   `Matrix` to `Array2d` in Python. 
+        Note that `Array1d`, `Array3d`, are also available.
+
+*   `Array<rank>.check` -> 
+    ```cpp
+    if (xt::any(xt::equal(array.type(), Type::Unset))) {
+        throw std::runtime_error("Please set all points");
+    }
+    ```
+    Note however that it is no longer required to set all points, 
+    unset points are filled-up with zeros.
+
+*   Strain is now stored as a member. 
+    Functions like `stress` now return the state based on the last specified deformation gradient, 
+    specified using `setDefGrad(F)`. This leads to the following changes:
+    - `stress`: no argument.
+    - `tangent`: no argument, single return value (no longer returns stress).
+
+# Change-log
+
+## v0.2.0
+
+Compared to v0.1.0, v0.2.0 has some generalisations and efficiency updates. 
+This requires the following changes:
+
+*   `Matrix` has been generalised to `Array<rank>`. Practically this requires changing:
+    -   `Matrix` to `Array<2>` in C++.
+    -   `Matrix` to `Array2d` in Python. 
+        Note that `Array1d`, `Array3d`, are also available.
+
+*   `Array` now sets zeros for all `Type::Unset` points. 
+    The function `check` is deprecated accordingly.
+
+*   Strain is now stored as a member. 
+    Functions like `stress` now return the state based on the last specified deformation gradient, 
+    specified using `setDefGrad(F)`. This leads to the following changes:
+    - `stress`: no argument.
+    - `tangent`: no argument, single return value (no longer returns stress).
+
+*   Tensor operations are now provided centrally in the GMat eco-system, 
+    by GMatTensor.

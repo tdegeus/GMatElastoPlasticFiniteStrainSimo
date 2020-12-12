@@ -11,16 +11,13 @@ option(BUILD_TESTS "${PROJECT_NAME} Build tests" OFF)
 # Version
 # =======
 
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/GMatElastoPlasticFiniteStrainSimo/config.h"
-             _GMAT_version_defines
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/GMatElastoPlasticFiniteStrainSimo/config.h" _GMAT_ver
      REGEX "#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_(MAJOR|MINOR|PATCH)")
 
-foreach(ver ${_GMAT_version_defines})
+foreach(ver ${_GMAT_ver})
     if(ver MATCHES
        "#define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION_(MAJOR|MINOR|PATCH) +([^ ]+)$")
-        set(_GMAT_VERSION_${CMAKE_MATCH_1}
-            "${CMAKE_MATCH_2}"
-            CACHE INTERNAL "")
+        set(_GMAT_VERSION_${CMAKE_MATCH_1} "${CMAKE_MATCH_2}" CACHE INTERNAL "")
     endif()
 endforeach()
 
@@ -32,6 +29,7 @@ message(STATUS "Building GMatElastoPlasticFiniteStrainSimo v${_GMAT_VERSION}")
 # ==========
 
 find_package(xtensor REQUIRED)
+find_package(GMatTensor REQUIRED)
 
 add_library(GMatElastoPlasticFiniteStrainSimo INTERFACE)
 
@@ -39,7 +37,7 @@ target_include_directories(GMatElastoPlasticFiniteStrainSimo INTERFACE
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
-target_link_libraries(GMatElastoPlasticFiniteStrainSimo INTERFACE xtensor)
+target_link_libraries(GMatElastoPlasticFiniteStrainSimo INTERFACE xtensor GMatTensor)
 
 # Installation
 # ============
@@ -81,6 +79,10 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticFiniteStrainSimo.pc"
 
 include("GMatElastoPlasticFiniteStrainSimoConfig.cmake")
 
+set(CTEST_TEST_TARGET_ALIAS RUN_ALL_TESTS)
+include(CTest)
+
 if(BUILD_TESTS)
+    enable_testing()
     add_subdirectory(test)
 endif()

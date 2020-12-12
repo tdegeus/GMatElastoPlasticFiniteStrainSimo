@@ -1,4 +1,4 @@
-import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as gmat
+import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as GMat
 import numpy as np
 import scipy.sparse.linalg as sp
 import itertools
@@ -151,10 +151,9 @@ tauy0  = param(1000.,0.003)  # initial yield stress
 Isoft = (1. - phase).astype(np.uint).reshape(2,1)
 Ihard = (     phase).astype(np.uint).reshape(2,1)
 
-mat = gmat.Matrix(2,1)
-mat.setElastic        (Isoft, K[0,0,0], mu[0,0,0])
+mat = GMat.Array2d([2,1])
+mat.setElastic(Isoft, K[0,0,0], mu[0,0,0])
 mat.setLinearHardening(Ihard, K[1,0,0], mu[1,0,0], tauy0[1,0,0], H[1,0,0])
-mat.check()
 
 # -------------------------------------------- LOADING ---------------------------------------------
 
@@ -190,7 +189,9 @@ for inc in range(1,ninc):
     C_F[0,0,:,:] = F[:,:,0,0,0]
     C_F[1,0,:,:] = F[:,:,1,0,0]
     # - C++
-    C_Sig, C_C = mat.Tangent(C_F)
+    mat.setDefGrad(C_F)
+    C_Sig = mat.Stress()
+    C_C = mat.Tangent()
     C_ep = mat.Epsp()
     # - compare
     assert np.abs(ep[0,0,0] - C_ep[0,0]) < 1.e-12

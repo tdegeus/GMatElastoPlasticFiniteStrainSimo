@@ -40,7 +40,7 @@ ext_modules = [Extension(
 
 setup(
     name = 'GMatElastoPlasticFiniteStrainSimo',
-    description = 'Simo elasto-plastic model (finite strain mechanics)',
+    description = 'Simo elasto-plastic model (finite strain mechanics).',
     long_description = desc,
     keywords = 'Material model; FEM; FFT',
     version = __version__,
@@ -49,6 +49,6 @@ setup(
     author_email = 'tom@geus.me',
     url = 'https://github.com/tdegeus/GMatElastoPlasticFiniteStrainSimo',
     ext_modules = ext_modules,
-    install_requires = ['pybind11>=2.2.0', 'pyxtensor>=0.1.1'],
+    install_requires = ['pybind11', 'pyxtensor'],
     cmdclass = {'build_ext': build},
     zip_safe = False)
