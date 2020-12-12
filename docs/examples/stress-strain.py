@@ -25,8 +25,10 @@ def StressStrain(mat, plastic):
             [0.0, 0.0, 1.0],
         ])
 
+        mat.setDefGrad(F)
+
         epseq[ilam] = gmat.Epseq(gmat.Strain(F))
-        sigeq[ilam] = gmat.Sigeq(mat.Stress(F))
+        sigeq[ilam] = gmat.Sigeq(mat.Stress())
 
     return (epseq, sigeq)
 

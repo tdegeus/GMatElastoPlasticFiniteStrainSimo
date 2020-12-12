@@ -69,5 +69,5 @@ jobs:
     - name: Check consistency with v0.1.0
       if: runner.os == 'Linux'
       run: |
-        conda install -c conda-forge python=3.8.5 python-gmatelastoplasticfinitestrainsimo=0.1.0
+        conda install -c conda-forge python-gmatelastoplasticfinitestrainsimo=0.1.0
         python test/compare_versions/Cartesian3d_check_v0.1.0.py

@@ -1,4 +1,5 @@
 import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as gmat
+import GMatTensor.Cartesian3d as gtens
 import GooseMPL as gplt
 import matplotlib.pyplot as plt
 import numpy as np
@@ -39,7 +40,9 @@ def consistency(mat, plastic):
             [0.0, 0.0, 1.0],
         ])
 
-        Sig0, C = mat.Tangent(F0)
+        mat.setDefGrad(F0)
+        Sig0 = mat.Stress()
+        C = mat.Tangent()
 
         Tau0 = Sig0 * np.linalg.det(F0)
 
@@ -56,7 +59,8 @@ def consistency(mat, plastic):
         dF = np.random.random((3, 3)) * x[i]
         F = F0 + dF
 
-        Sig = mat.Stress(F)
+        mat.setDefGrad(F)
+        Sig = mat.Stress()
 
         Tau = Sig * np.linalg.det(F)
 
