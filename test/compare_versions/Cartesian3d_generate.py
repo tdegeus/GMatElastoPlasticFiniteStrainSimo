@@ -55,7 +55,7 @@ with h5py.File('Cartesian3d_random.hdf5', 'w') as data:
 
         mat.increment()
 
-        GradU = 20 * np.random.random([nelem, nip, 3, 3])
+        GradU = np.random.random([nelem, nip, 3, 3])
         F = GradU + mat.I2()
 
         data['/random/{0:d}/F'.format(i)] = F
