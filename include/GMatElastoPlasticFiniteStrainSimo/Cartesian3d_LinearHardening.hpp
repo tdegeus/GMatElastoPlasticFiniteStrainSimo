@@ -69,11 +69,11 @@ inline void LinearHardening::setDefGradPtr(const T* arg, bool tangent)
     std::copy(arg, arg + 9, &m_F[0]);
 
     // volume change ratio
-    double J = GT::det(&m_F[0]);
+    double J = GT::Det(&m_F[0]);
 
     // inverse of "F_t"
     tensor2_type Finv_t;
-    GT::inv(m_F_t.data(), &Finv_t[0]);
+    GT::Inv(m_F_t.data(), &Finv_t[0]);
 
     // incremental deformation gradient tensor
     tensor2_type f;

@@ -133,6 +133,8 @@ private:
     xt::xtensor<double, 4> m_C;   // tangent
 };
 
+// Material identifier
+
 struct Type {
     enum Value {
         Unset,

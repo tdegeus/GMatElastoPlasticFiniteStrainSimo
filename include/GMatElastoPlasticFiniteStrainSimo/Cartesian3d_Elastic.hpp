@@ -39,7 +39,7 @@ inline void Elastic::setDefGradPtr(const T* arg, bool tangent)
     std::copy(arg, arg + 9, &m_F[0]);
 
     // volume change ratio
-    double J = GT::det(&m_F[0]);
+    double J = GT::Det(&m_F[0]);
 
     // Finger tensor
     tensor2_type Be;
