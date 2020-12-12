@@ -41,6 +41,14 @@ class Test(unittest.TestCase):
 
                 F = data['/random/{0:d}/F'.format(i)][...]
 
+                print(np.max(mat.Stress(F) - data['/random/{0:d}/Stress'.format(i)][...]))
+                print(np.min(mat.Stress(F) - data['/random/{0:d}/Stress'.format(i)][...]))
+                print(np.linalg.norm(mat.Stress(F) - data['/random/{0:d}/Stress'.format(i)][...]))
+
+                print(np.max(mat.Tangent(F)[1] - data['/random/{0:d}/Tangent'.format(i)][...]))
+                print(np.min(mat.Tangent(F)[1] - data['/random/{0:d}/Tangent'.format(i)][...]))
+                print(np.linalg.norm(mat.Tangent(F)[1] - data['/random/{0:d}/Tangent'.format(i)][...]))
+
                 self.assertTrue(np.allclose(mat.Stress(F), data['/random/{0:d}/Stress'.format(i)][...], 1e-3))
                 self.assertTrue(np.allclose(mat.Tangent(F)[1], data['/random/{0:d}/Tangent'.format(i)][...], 1e-3))
                 self.assertTrue(np.allclose(mat.Epsp(), data['/random/{0:d}/Epsp'.format(i)][...], 1e-3))
