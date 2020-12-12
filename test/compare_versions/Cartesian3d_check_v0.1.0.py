@@ -43,7 +43,7 @@ class Test(unittest.TestCase):
 
                 self.assertTrue(np.allclose(mat.Stress(F), data['/random/{0:d}/Stress'.format(i)][...]))
                 self.assertTrue(np.allclose(mat.Tangent(F)[1], data['/random/{0:d}/Tangent'.format(i)][...]))
-                self.assertTrue(np.allclose(mat.Epsp(), data['/random/{0:d}/Tangent'.format(i)][...]))
+                self.assertTrue(np.allclose(mat.Epsp(), data['/random/{0:d}/Epsp'.format(i)][...]))
 
 if __name__ == '__main__':
 
