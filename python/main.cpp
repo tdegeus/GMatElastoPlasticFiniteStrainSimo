@@ -5,12 +5,12 @@
 */
 
 #include <pybind11/pybind11.h>
-#include <pyxtensor/pyxtensor.hpp>
+#include <pybind11/stl.h>
 
-// Enable basic assertions on matrix shape
-// (doesn't cost a lot of time, but avoids segmentation faults)
-#define GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT
+#define FORCE_IMPORT_ARRAY
+#include <xtensor-python/pytensor.hpp>
 
+#include <GMatElastoPlasticFiniteStrainSimo/version.h>
 #include <GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h>
 
 namespace py = pybind11;
@@ -157,10 +157,19 @@ void add_sigeq_overloads(T& module)
         py::arg("A"));
 }
 
-PYBIND11_MODULE(GMatElastoPlasticFiniteStrainSimo, m)
+PYBIND11_MODULE(_GMatElastoPlasticFiniteStrainSimo, m)
 {
+    xt::import_numpy();
 
     m.doc() = "Elasto-plastic material model";
+
+    m.def("version",
+          &GMatElastoPlasticFiniteStrainSimo::version,
+          "Return version string.");
+
+    m.def("version_dependencies",
+          &GMatElastoPlasticFiniteStrainSimo::version_dependencies,
+          "Return list of strings.");
 
     // -----------------------------
     // GMatElastoPlasticFiniteStrainSimo.Cartesian3d
