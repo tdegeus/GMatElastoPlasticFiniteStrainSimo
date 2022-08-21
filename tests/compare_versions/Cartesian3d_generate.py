@@ -1,68 +1,37 @@
+import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as GMat
+import GMatTensor.Cartesian3d as tensor
 import h5py
 import numpy as np
-import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as GMat
 
-with h5py.File('Cartesian3d_random.hdf5', 'w') as data:
+with h5py.File("Cartesian3d_random.hdf5", "w") as data:
 
-    nelem = 1000
-    nip = 4
-    iden = 2.0 * np.random.random([nelem, nip])
-    iden = np.where(iden < 1.0, 0.0, iden)
-    iden = np.where(iden >= 1.0, 1.0, iden)
-    iden = iden.astype(np.int)
+    shape = [1000, 4]
 
-    shape = np.array([nelem, nip], np.int)
+    plastic = GMat.LinearHardening2d(
+        K=np.random.random(shape),
+        G=np.random.random(shape),
+        tauy0=np.random.random(shape),
+        H=np.random.random(shape),
+    )
 
-    data['/shape'] = shape
+    elastic = GMat.Elastic2d(K=plastic.K, G=plastic.G)
 
-    mat = GMat.Array2d(shape)
+    data["K"] = plastic.K
+    data["G"] = plastic.G
+    data["tauy0"] = plastic.tauy0
+    data["H"] = plastic.H
 
-    I = np.where(iden == 0, 1, 0).astype(np.int)
-    n = np.sum(I)
-    idx = np.zeros(I.size, np.int)
-    idx[np.argwhere(I.ravel() == 1).ravel()] = np.arange(n)
-    idx = idx.reshape(I.shape)
-    K = np.ones(n)
-    G = np.ones(n)
-    tauy0 = 0.1 * np.ones(n)
-    H = np.ones(n)
-
-    data['/LinearHardening/I'] = I
-    data['/LinearHardening/idx'] = idx
-    data['/LinearHardening/K'] = K
-    data['/LinearHardening/G'] = G
-    data['/LinearHardening/tauy0'] = tauy0
-    data['/LinearHardening/H'] = H
-
-    mat.setLinearHardening(I, idx, K, G, tauy0, H)
-
-    I = np.where(iden == 1, 1, 0).astype(np.int)
-    n = np.sum(I)
-    idx = np.zeros(I.size, np.int)
-    idx[np.argwhere(I.ravel() == 1).ravel()] = np.arange(n)
-    idx = idx.reshape(I.shape)
-    K = np.ones(n)
-    G = np.ones(n)
-
-    data['/Elastic/I'] = I
-    data['/Elastic/idx'] = idx
-    data['/Elastic/K'] = K
-    data['/Elastic/G'] = G
-
-    mat.setElastic(I, idx, K, G)
+    I2 = tensor.Array2d(shape).I2
 
     for i in range(20):
 
-        mat.increment()
+        plastic.increment()
+        plastic.F = I2 + np.random.random(shape + [3, 3])
+        elastic.F = np.copy(plastic.F)
 
-        GradU = np.random.random([nelem, nip, 3, 3])
-        F = GradU + mat.I2()
-
-        data['/random/{0:d}/F'.format(i)] = F
-
-        mat.setDefGrad(F)
-
-        data['/random/{0:d}/Stress'.format(i)] = mat.Stress()
-        data['/random/{0:d}/Tangent'.format(i)] = mat.Tangent()
-        data['/random/{0:d}/Epsp'.format(i)] = mat.Epsp()
-
+        data[f"/data/{i:d}/F"] = plastic.F
+        data[f"/data/{i:d}/plastic/Stress"] = plastic.Sig
+        data[f"/data/{i:d}/plastic/Tangent"] = plastic.C
+        data[f"/data/{i:d}/plastic/epsp"] = plastic.epsp
+        data[f"/data/{i:d}/elastic/Stress"] = elastic.Sig
+        data[f"/data/{i:d}/elastic/Tangent"] = elastic.C

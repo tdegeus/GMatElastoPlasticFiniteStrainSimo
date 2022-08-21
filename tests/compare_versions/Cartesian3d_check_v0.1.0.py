@@ -1,52 +1,57 @@
-import h5py
-import numpy as np
-import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as GMat
 import unittest
 
-import GMatElastoPlasticFiniteStrainSimo
+import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as GMat
+import h5py
+import numpy as np
+
 
 class Test(unittest.TestCase):
-
     def test_main(self):
 
-        with h5py.File('Cartesian3d_random.hdf5', 'r') as data:
+        with h5py.File("Cartesian3d_random.hdf5") as data:
 
-            shape = data['/shape'][...]
+            K = data["K"][...]
+            G = data["G"][...]
+            tauy0 = data["tauy0"][...]
+            H = data["H"][...]
 
-            i = np.eye(3)
-            I = np.einsum('xy,ij', np.ones(shape), i)
-            I4 = np.einsum('xy,ijkl->xyijkl', np.ones(shape), np.einsum('il,jk', i, i))
-            I4rt = np.einsum('xy,ijkl->xyijkl', np.ones(shape), np.einsum('ik,jl', i, i))
-            I4s = (I4 + I4rt) / 2.0
+            plastic = GMat.Matrix(K.shape[0], K.shape[1])
+            elastic = GMat.Matrix(K.shape[0], K.shape[1])
 
-            mat = GMat.Matrix(shape[0], shape[1])
-
-            I = data['/LinearHardening/I'][...]
-            idx = data['/LinearHardening/idx'][...]
-            K = data['/LinearHardening/K'][...]
-            G = data['/LinearHardening/G'][...]
-            tauy0 = data['/LinearHardening/tauy0'][...]
-            H = data['/LinearHardening/H'][...]
-
-            mat.setLinearHardening(I, idx, K, G, tauy0, H)
-
-            I = data['/Elastic/I'][...]
-            idx = data['/Elastic/idx'][...]
-            K = data['/Elastic/K'][...]
-            G = data['/Elastic/G'][...]
-
-            mat.setElastic(I, idx, K, G)
+            for i in range(K.shape[0]):
+                for j in range(K.shape[1]):
+                    iden = np.zeros(K.shape, dtype=bool)
+                    iden[i, j] = True
+                    plastic.setLinearHardening(iden, K[i, j], G[i, j], tauy0[i, j], H[i, j])
+                    elastic.setElastic(iden, K[i, j], G[i, j])
 
             for i in range(20):
 
-                mat.increment()
+                plastic.increment()
+                F = data[f"/data/{i:d}/F"][...]
 
-                F = data['/random/{0:d}/F'.format(i)][...]
+                self.assertTrue(
+                    np.allclose(plastic.Stress(F), data[f"/data/{i:d}/plastic/Stress"][...], 1e-3)
+                )
+                self.assertTrue(
+                    np.allclose(
+                        plastic.Tangent(F)[1], data[f"/data/{i:d}/plastic/Tangent"][...], 1e-3
+                    )
+                )
+                self.assertTrue(
+                    np.allclose(plastic.Epsp(), data[f"/data/{i:d}/plastic/epsp"][...], 1e-3)
+                )
 
-                self.assertTrue(np.allclose(mat.Stress(F), data['/random/{0:d}/Stress'.format(i)][...], 1e-3))
-                self.assertTrue(np.allclose(mat.Tangent(F)[1], data['/random/{0:d}/Tangent'.format(i)][...], 1e-3))
-                self.assertTrue(np.allclose(mat.Epsp(), data['/random/{0:d}/Epsp'.format(i)][...], 1e-3))
+                self.assertTrue(
+                    np.allclose(elastic.Stress(F), data[f"/data/{i:d}/elastic/Stress"][...], 1e-3)
+                )
+                self.assertTrue(
+                    np.allclose(
+                        elastic.Tangent(F)[1], data[f"/data/{i:d}/elastic/Tangent"][...], 1e-3
+                    )
+                )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
 
     unittest.main()

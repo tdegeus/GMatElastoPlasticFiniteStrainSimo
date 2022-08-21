@@ -33,8 +33,8 @@ get_target_property(
 
 # Find dependencies
 
-find_dependency(xtensor)
 find_dependency(GMatTensor)
+find_dependency(xtensor)
 
 # Define support target "GMatElastoPlasticFiniteStrainSimo::compiler_warnings"
 
@@ -61,6 +61,7 @@ if(NOT TARGET GMatElastoPlasticFiniteStrainSimo::debug)
     set_property(
         TARGET GMatElastoPlasticFiniteStrainSimo::debug
         PROPERTY INTERFACE_COMPILE_DEFINITIONS
-        XTENSOR_ENABLE_ASSERT
-        GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT)
+        GMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT
+        GMATTENSOR_ENABLE_ASSERT
+        XTENSOR_ENABLE_ASSERT)
 endif()
