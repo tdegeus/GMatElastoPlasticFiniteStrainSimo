@@ -1,8 +1,6 @@
 /**
-Version information.
-
 \file
-\copyright Copyright 2018. Tom de Geus. All rights reserved.
+\copyright Copyright. Tom de Geus. All rights reserved.
 \license This project is released under the MIT License.
 */
 
@@ -23,13 +21,14 @@ Either:
 
 -   Define externally using::
 
-        -DGMATELASTOPLASTICFINITESTRAINSIMO_VERSION="`python -c "from setuptools_scm import get_version; print(get_version())"`"
+        -DGMATELASTOPLASTICFINITESTRAINSIMO_VERSION="`python -c "from setuptools_scm import
+get_version; print(get_version())"`"
 
     From the root of this project. This is what ``setup.py`` does.
 
-Note that both ``CMakeLists.txt`` and ``setup.py`` will construct the version using ``setuptools_scm``.
-Tip: use the environment variable ``SETUPTOOLS_SCM_PRETEND_VERSION``
-to overwrite the automatic version.
+Note that both ``CMakeLists.txt`` and ``setup.py`` will construct the version using
+``setuptools_scm``. Tip: use the environment variable ``SETUPTOOLS_SCM_PRETEND_VERSION`` to
+overwrite the automatic version.
 */
 #ifndef GMATELASTOPLASTICFINITESTRAINSIMO_VERSION
 #define GMATELASTOPLASTICFINITESTRAINSIMO_VERSION "@PROJECT_VERSION@"
@@ -38,13 +37,14 @@ to overwrite the automatic version.
 namespace GMatElastoPlasticFiniteStrainSimo {
 
 /**
-Return version string, e.g.
-
-    "0.8.0"
-
-\return std::string
+Return version string, e.g. `"0.8.0"`
+\return Version string.
 */
-inline std::string version();
+inline std::string version()
+{
+    return GMatTensor::detail::unquote(
+        std::string(QUOTE(GMATELASTOPLASTICFINITESTRAINSIMO_VERSION)));
+}
 
 /**
 Return versions of this library and of all of its dependencies.
@@ -56,10 +56,11 @@ The output is a list of strings:
 
 \return List of strings.
 */
-inline std::vector<std::string> version_dependencies();
+inline std::vector<std::string> version_dependencies()
+{
+    return GMatTensor::version_dependencies();
+}
 
 } // namespace GMatElastoPlasticFiniteStrainSimo
-
-#include "version.hpp"
 
 #endif
