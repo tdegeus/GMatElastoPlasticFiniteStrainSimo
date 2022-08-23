@@ -78,8 +78,8 @@ auto LinearHardening(T& cls)
     cls.def_property_readonly("shape_tensor4", &S::shape_tensor4, "Array of rank 4 tensors.");
     cls.def_property_readonly("K", &S::K, "Bulk modulus.");
     cls.def_property_readonly("G", &S::G, "Shear modulus.");
-    cls.def_property_readonly("tauy0", &S::G, "Initial yield stress.");
-    cls.def_property_readonly("H", &S::G, "Hardening modulus.");
+    cls.def_property_readonly("tauy0", &S::tauy0, "Initial yield stress.");
+    cls.def_property_readonly("H", &S::H, "Hardening modulus.");
     cls.def_property_readonly("Sig", &S::Sig, "Cauchy stress tensor.");
     cls.def_property_readonly("C", &S::C, "Tangent tensor.");
     cls.def_property_readonly("epsp", &S::epsp, "Plastic strain.");

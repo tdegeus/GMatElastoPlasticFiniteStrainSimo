@@ -26,7 +26,7 @@ with h5py.File("Cartesian3d_random.hdf5", "w") as data:
     for i in range(20):
 
         plastic.increment()
-        plastic.F = I2 + np.random.random(shape + [3, 3])
+        plastic.F = I2 + i * 0.1 * np.random.random(shape + [3, 3])
         elastic.F = np.copy(plastic.F)
 
         data[f"/data/{i:d}/F"] = plastic.F

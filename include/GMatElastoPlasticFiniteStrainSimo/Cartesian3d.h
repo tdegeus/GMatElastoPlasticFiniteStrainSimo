@@ -557,9 +557,9 @@ public:
             double epsp_t;
 
             std::array<double, m_stride_tensor2> Finv_t;
-            std::array<double, m_stride_tensor2> f;
+            std::array<double, m_stride_tensor2> Fdelta;
             std::array<double, m_stride_tensor2> Be_trial;
-            std::array<double, m_stride_tensor2> N_tens;
+            std::array<double, m_stride_tensor2> N2;
             std::array<double, m_stride_tensor2> vec;
             std::array<double, m_ndim> Be_trial_val;
             std::array<double, m_ndim> Epse_val;
@@ -567,7 +567,7 @@ public:
             std::array<double, m_ndim> Taud_val;
             std::array<double, m_ndim> Sig_val;
             std::array<double, m_ndim> N_val;
-            std::array<double, m_ndim> e_val;
+            std::array<double, m_ndim> lnBe_val;
 
             std::array<size_t, 4> tensor4 = {m_ndim, m_ndim, m_ndim, m_ndim};
             array_type::tensor<double, 4> NN = xt::empty<double>(tensor4);
@@ -607,11 +607,11 @@ public:
                 GT::Inv(F_t.data(), &Finv_t[0]);
 
                 // incremental deformation gradient tensor
-                GT::A2_dot_B2(F.data(), &Finv_t[0], &f[0]);
+                GT::A2_dot_B2(F.data(), &Finv_t[0], &Fdelta[0]);
 
                 // trial elastic Finger tensor (symmetric)
-                // assumes "f" to result in only elastic deformation: corrected below if needed
-                GT::A2_dot_B2_dot_C2T(&f[0], Be_t.data(), &f[0], Be.data());
+                // assumes "Fdelta" to result in only elastic deformation: corrected below if needed
+                GT::A2_dot_B2_dot_C2T(&Fdelta[0], Be_t.data(), &Fdelta[0], Be.data());
 
                 // copy trial elastic Finger tensor (not updated by the return map)
                 std::copy(Be.begin(), Be.end(), Be_trial.begin());
@@ -649,19 +649,15 @@ public:
                 if (phi > 0) {
                     // - plastic flow
                     dgamma = phi / (3.0 * G + H);
-                    // - direction of plastic flow
-                    for (size_t j = 0; j < 3; ++j) {
-                        N_val[j] = 1.5 * Taud_val[j] / taueq;
-                    }
-                    GT::from_eigs(&vec[0], &N_val[0], &N_tens[0]);
                     // - update trial stress and elastic strain (only the deviatoric part)
                     for (size_t j = 0; j < 3; ++j) {
+                        N_val[j] = 1.5 * Taud_val[j] / taueq;
                         Taud_val[j] *= (1.0 - 3.0 * G * dgamma / taueq);
                         Epsed_val[j] = Taud_val[j] / (2.0 * G);
-                        e_val[j] = std::exp(2.0 * (epsem + Epsed_val[j]));
+                        lnBe_val[j] = std::exp(2.0 * (epsem + Epsed_val[j]));
                     }
                     // - update elastic Finger tensor, in original coordinate frame
-                    GT::from_eigs(&vec[0], &e_val[0], Be.data());
+                    GT::from_eigs(&vec[0], &lnBe_val[0], Be.data());
                     // - update equivalent plastic strain
                     m_epsp.flat(i) = epsp_t + dgamma;
                 }
@@ -683,7 +679,8 @@ public:
                 }
                 else {
                     // - Directions of plastic flow
-                    GT::A2_dyadic_B2(&N_tens[0], &N_tens[0], NN.data());
+                    GT::from_eigs(&vec[0], &N_val[0], &N2[0]);
+                    GT::A2_dyadic_B2(&N2[0], &N2[0], NN.data());
                     // - Temporary constants
                     double a0;
                     double a1 = G / (H + 3.0 * G);
