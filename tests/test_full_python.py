@@ -4,6 +4,9 @@ import unittest
 import GMatElastoPlasticFiniteStrainSimo.Cartesian3d as GMat
 import numpy as np
 
+# set seed to ensure that tests don't fail due to some very extreme parameter
+np.random.seed(0)
+
 # turn of warning for zero division
 # (which occurs in the linearization of the logarithmic strain)
 np.seterr(divide="ignore", invalid="ignore")
@@ -242,8 +245,8 @@ class Test_main(unittest.TestCase):
             # - C++
             mat.F = tensor2cpp(F)
             # - compare
-            self.assertTrue(np.allclose(mat.Sig, tensor2cpp(Sig), atol=1e-4, rtol=1e-2))
-            self.assertTrue(np.allclose(mat.C, tensor4cpp(C), atol=1e-4, rtol=1e-2))
+            self.assertTrue(np.allclose(mat.Sig, tensor2cpp(Sig), atol=1e-5, rtol=1e-3))
+            self.assertTrue(np.allclose(mat.C, tensor4cpp(C), atol=1e-5, rtol=1e-3))
 
             # end-of-increment: update history
             # - Python
@@ -282,9 +285,9 @@ class Test_main(unittest.TestCase):
             # - C++
             mat.F = tensor2cpp(F)
             # - compare
-            self.assertTrue(np.allclose(mat.epsp, ep, atol=1e-4, rtol=1e-2))
-            self.assertTrue(np.allclose(mat.Sig, tensor2cpp(Sig), atol=1e-4, rtol=1e-2))
-            self.assertTrue(np.allclose(mat.C, tensor4cpp(C), atol=1e-4, rtol=1e-2))
+            self.assertTrue(np.allclose(mat.epsp, ep, atol=1e-5, rtol=1e-3))
+            self.assertTrue(np.allclose(mat.Sig, tensor2cpp(Sig), atol=1e-5, rtol=1e-3))
+            self.assertTrue(np.allclose(mat.C, tensor4cpp(C), atol=1e-5, rtol=1e-3))
 
             # end-of-increment: update history
             # - Python
