@@ -205,7 +205,7 @@ def constitutive(F, F_t, be_t, ep_t, K, mu, tauy0, H):
     K4 = ddot44(K4, ddot44(dlnbe4_s, dbe4_s))
     K4 = dot42(-I4rt, tau) + K4
 
-    return sig, K4, be, ep
+    return sig, K4 / J, be, ep
 
 
 class Test_main(unittest.TestCase):
@@ -216,33 +216,25 @@ class Test_main(unittest.TestCase):
         # material parameters
         K = np.random.random(shape)
         mu = np.random.random(shape)
-        tauy0 = 10000 * np.random.random(shape)
+        tauy0 = 100000 * np.random.random(shape)
         H = np.random.random(shape)
         mat = GMat.Elastic3d(K, mu)
 
         # stress, deformation gradient, plastic strain, elastic Finger tensor
         # NB "_t" signifies that it concerns the value at the previous increment
         ep_t = np.zeros([Nx, Ny, Nz])
-        np.zeros([3, 3, Nx, Ny, Nz])
         F = np.array(I2, copy=True)
         F_t = np.array(I2, copy=True)
         be_t = np.array(I2, copy=True)
 
         # initialize macroscopic incremental loading
-        ninc = 50
-        lam = np.zeros(shape)
+        ninc = 100
 
         # incremental deformation
         for inc in range(1, ninc):
 
             # deformation gradient
-            lam += 0.1 * np.random.random(shape)
-            F = np.copy(I2)
-            F[0, 0, ...] = 1.0 + lam
-            F[0, 1, ...] = 1.1 * lam
-            F[0, 2, ...] = 0.9 * lam
-            F[1, 1, ...] = 1.0 / (1.0 + lam)
-            F[1, 2, ...] = 0.8 * lam
+            F = np.copy(I2) + 0.1 * inc * np.random.random([3, 3] + [Nx, Ny, Nz])
 
             # compute constitutive response
             # - Python
@@ -250,8 +242,8 @@ class Test_main(unittest.TestCase):
             # - C++
             mat.F = tensor2cpp(F)
             # - compare
-            self.assertTrue(np.allclose(mat.Sig, tensor2cpp(Sig)))
-            self.assertTrue(np.allclose(mat.C, tensor4cpp(C)))
+            self.assertTrue(np.allclose(mat.Sig, tensor2cpp(Sig), atol=1e-4, rtol=1e-2))
+            self.assertTrue(np.allclose(mat.C, tensor4cpp(C), atol=1e-4, rtol=1e-2))
 
             # end-of-increment: update history
             # - Python
@@ -271,13 +263,12 @@ class Test_main(unittest.TestCase):
         # stress, deformation gradient, plastic strain, elastic Finger tensor
         # NB "_t" signifies that it concerns the value at the previous increment
         ep_t = np.zeros([Nx, Ny, Nz])
-        np.zeros([3, 3, Nx, Ny, Nz])
         F = np.array(I2, copy=True)
         F_t = np.array(I2, copy=True)
         be_t = np.array(I2, copy=True)
 
         # initialize macroscopic incremental loading
-        ninc = 50
+        ninc = 100
 
         # incremental deformation
         for inc in range(1, ninc):
@@ -291,9 +282,9 @@ class Test_main(unittest.TestCase):
             # - C++
             mat.F = tensor2cpp(F)
             # - compare
-            self.assertTrue(np.allclose(mat.epsp, ep))
-            self.assertTrue(np.allclose(mat.Sig, tensor2cpp(Sig)))
-            self.assertTrue(np.allclose(mat.C, tensor4cpp(C)))
+            self.assertTrue(np.allclose(mat.epsp, ep, atol=1e-4, rtol=1e-2))
+            self.assertTrue(np.allclose(mat.Sig, tensor2cpp(Sig), atol=1e-4, rtol=1e-2))
+            self.assertTrue(np.allclose(mat.C, tensor4cpp(C), atol=1e-4, rtol=1e-2))
 
             # end-of-increment: update history
             # - Python
