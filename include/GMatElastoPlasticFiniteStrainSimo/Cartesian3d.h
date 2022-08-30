@@ -35,7 +35,6 @@ inline auto Epseq(const T& A) -> typename GMatTensor::allocate<xt::get_rank<T>::
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.dimension() >= 2);
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape(A.dimension() - 1) == 3);
     GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(A.shape(A.dimension() - 2) == 3);
-    GMATELASTOPLASTICFINITESTRAINSIMO_ASSERT(xt::has_shape(A, ret.shape()));
 
     return xt::eval(std::sqrt(2.0 / 3.0) * GMatTensor::Cartesian3d::Norm_deviatoric(A));
 }
